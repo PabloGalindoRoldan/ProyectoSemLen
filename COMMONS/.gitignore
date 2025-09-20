@@ -1,0 +1,13 @@
+# eclipse specific git ignore
+.project
+.metadata
+
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+
+.classpath
+.settings/
+.loadpath
+/bin/
