@@ -8,6 +8,7 @@ Como clonar este proyecto en sus computadoras:
 
     cd <aca ponen el path hasta el directorio que hayan creado>
     git clone https://github.com/PabloGalindoRoldan/ProyectoSemLen.git
+    cd <aca ponen el path a la carpeta ProyectoSemLen>
     git checkout develop ---> esto es para posicionarse en el Branch "develop". El branch Main no se toca. 
     git checkout -b <aca ponen su nombre; esto va a crear un branch con sus nombres que deriva de la branch develop>
 
