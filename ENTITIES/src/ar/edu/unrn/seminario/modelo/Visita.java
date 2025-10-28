@@ -1,18 +1,37 @@
 package ar.edu.unrn.seminario.modelo;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Visita {
     private Integer id;
     private String visitante;
-    private String fecha;
+    private LocalDateTime fechaHora;
     private String motivo;
     private boolean confirmada;
+    private int cantidadBienesRecogidos;
+    private List<Articulo> articulosRecogidos = new ArrayList<>();
+    private String observaciones;
+    private OrdenRetiro ordenRetiro;
+    private boolean visitaFinal;
 
-    public Visita(Integer id, String visitante, String fecha, String motivo, boolean confirmada) {
+    public Visita(Integer id, String visitante, LocalDateTime fechaHora, String motivo, boolean confirmada) {
         this.id = id;
         this.visitante = visitante;
-        this.fecha = fecha;
+        this.fechaHora = fechaHora;
         this.motivo = motivo;
         this.confirmada = confirmada;
+    }
+
+    public Visita(Integer id, String visitante, LocalDateTime fechaHora, String motivo, boolean confirmada,
+            int cantidadBienesRecogidos, List<Articulo> articulosRecogidos, String observaciones, OrdenRetiro ordenRetiro, boolean visitaFinal) {
+        this(id, visitante, fechaHora, motivo, confirmada);
+        this.cantidadBienesRecogidos = cantidadBienesRecogidos;
+        if (articulosRecogidos != null) this.articulosRecogidos.addAll(articulosRecogidos);
+        this.observaciones = observaciones;
+        this.ordenRetiro = ordenRetiro;
+        this.visitaFinal = visitaFinal;
     }
 
     public Integer getId() {
@@ -23,8 +42,8 @@ public class Visita {
         return visitante;
     }
 
-    public String getFecha() {
-        return fecha;
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
     public String getMotivo() {
@@ -35,12 +54,49 @@ public class Visita {
         return confirmada;
     }
 
-    public void confirmar() {
-        this.confirmada = true;
+    public int getCantidadBienesRecogidos() {
+        return cantidadBienesRecogidos;
     }
 
-    public void cancelar() {
-        this.confirmada = false;
+    public List<Articulo> getArticulosRecogidos() {
+        return new ArrayList<>(this.articulosRecogidos);
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public OrdenRetiro getOrdenRetiro() {
+        return ordenRetiro;
+    }
+
+    public boolean isVisitaFinal() {
+        return visitaFinal;
+    }
+
+    public void setConfirmada(boolean confirmada) {
+        this.confirmada = confirmada;
+    }
+
+    public void setCantidadBienesRecogidos(int cantidad) {
+        this.cantidadBienesRecogidos = cantidad;
+    }
+
+    public void setArticulosRecogidos(List<Articulo> articulos) {
+        this.articulosRecogidos.clear();
+        if (articulos != null) this.articulosRecogidos.addAll(articulos);
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public void setOrdenRetiro(OrdenRetiro ordenRetiro) {
+        this.ordenRetiro = ordenRetiro;
+    }
+
+    public void setVisitaFinal(boolean visitaFinal) {
+        this.visitaFinal = visitaFinal;
     }
 
     @Override

@@ -108,10 +108,33 @@ public class VentanaPrincipal extends JFrame {
 				listadoPedidos.setLocationRelativeTo(null);
 				listadoPedidos.setVisible(true);
 			}
-		});
+		} );
 		pedidoDonacionMenu.add(listarPedidosMenuItem);
 
-		
+		// Ordenes de retiro menu
+		JMenu ordenesMenu = new JMenu("Ordenes de Retiro");
+		menuBar.add(ordenesMenu);
+
+		JMenuItem altaOrdenMenuItem = new JMenuItem("Crear Orden de Retiro");
+		altaOrdenMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AltaOrdenRetiro altaOrden = new AltaOrdenRetiro(api);
+				altaOrden.setLocationRelativeTo(null);
+				altaOrden.setVisible(true);
+			}
+		});
+		ordenesMenu.add(altaOrdenMenuItem);
+
+		JMenuItem listarOrdenesMenuItem = new JMenuItem("Listar Ordenes de Retiro");
+		listarOrdenesMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoOrdenes listadoOrdenes = new ListadoOrdenes(api);
+				listadoOrdenes.setLocationRelativeTo(null);
+				listadoOrdenes.setVisible(true);
+			}
+		});
+		ordenesMenu.add(listarOrdenesMenuItem);
+
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import ar.edu.unrn.seminario.api.IApi;
+import ar.edu.unrn.seminario.dto.DonacionDTO;
 import ar.edu.unrn.seminario.dto.PedidoDonacionDTO;
 
 public class ListadoPedidos extends JFrame {
@@ -29,13 +31,13 @@ public class ListadoPedidos extends JFrame {
         this.api = api;
         setTitle("Listado de Pedidos de Donacion");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setBounds(100, 100, 900, 420);
+        setBounds(100, 100, 950, 420);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(null);
         setContentPane(contentPane);
 
-        String[] columns = new String[] { "ID", "FechaCreacion", "Descripcion", "Solicitante", "Donante", "Observaciones", "NecesitaVehiculo", "Activo" };
+        String[] columns = new String[] { "ID", "FechaCreacion", "Descripcion", "Solicitante", "Donante", "PuntajeTotal", "Observaciones", "NecesitaVehiculo", "Activo" };
         model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -45,11 +47,11 @@ public class ListadoPedidos extends JFrame {
 
         table = new JTable(model);
         JScrollPane scroll = new JScrollPane(table);
-        scroll.setBounds(10, 10, 860, 320);
+        scroll.setBounds(10, 10, 920, 300);
         contentPane.add(scroll);
 
         JButton refreshButton = new JButton("Refrescar");
-        refreshButton.setBounds(10, 340, 120, 25);
+        refreshButton.setBounds(10, 320, 120, 25);
         refreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 loadData();
@@ -58,7 +60,7 @@ public class ListadoPedidos extends JFrame {
         contentPane.add(refreshButton);
 
         JButton eliminarButton = new JButton("Eliminar Seleccion");
-        eliminarButton.setBounds(140, 340, 160, 25);
+        eliminarButton.setBounds(140, 320, 160, 25);
         eliminarButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
@@ -81,11 +83,70 @@ public class ListadoPedidos extends JFrame {
         });
         contentPane.add(eliminarButton);
 
+        JButton verDonacionesButton = new JButton("Ver Donaciones");
+        verDonacionesButton.setBounds(310, 320, 140, 25);
+        verDonacionesButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int row = table.getSelectedRow();
+                if (row == -1) {
+                    JOptionPane.showMessageDialog(null, "Seleccione una fila para ver sus donaciones", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                Integer id = (Integer) model.getValueAt(row, 0);
+                try {
+                    PedidoDonacionDTO pedido = api.obtenerPedidoDonacionPorId(id);
+                    if (pedido == null) {
+                        JOptionPane.showMessageDialog(null, "Pedido no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    List<DonacionDTO> donaciones = pedido.getDonaciones();
+                    if (donaciones == null || donaciones.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "El pedido no contiene donaciones", "Info", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+
+                    JDialog dialog = new JDialog(ListadoPedidos.this, "Donaciones del Pedido " + id, true);
+                    dialog.setSize(500, 300);
+                    dialog.setLocationRelativeTo(ListadoPedidos.this);
+
+                    String[] cols = new String[] { "Tipo", "Categoria", "Puntaje" };
+                    DefaultTableModel dm = new DefaultTableModel(cols, 0) {
+                        @Override
+                        public boolean isCellEditable(int r, int c) { return false; }
+                    };
+                    JTable t = new JTable(dm);
+                    for (DonacionDTO d : donaciones) {
+                        Object[] r = new Object[] { d.getTipoDonacion(), d.getCategoria(), d.getPuntaje() };
+                        dm.addRow(r);
+                    }
+
+                    JScrollPane sc = new JScrollPane(t);
+                    sc.setBounds(10, 10, 480, 220);
+                    dialog.getContentPane().setLayout(null);
+                    dialog.getContentPane().add(sc);
+
+                    JButton close = new JButton("Cerrar");
+                    close.setBounds(380, 235, 100, 25);
+                    close.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            dialog.dispose();
+                        }
+                    });
+                    dialog.getContentPane().add(close);
+
+                    dialog.setVisible(true);
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Error al obtener donaciones: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        contentPane.add(verDonacionesButton);
+
         loadData();
     }
 
     private void loadData() {
-        // clear
         model.setRowCount(0);
         try {
             List<PedidoDonacionDTO> pedidos = api.obtenerPedidosDonacion();
@@ -94,7 +155,7 @@ public class ListadoPedidos extends JFrame {
                 if (p.getFechaCreacion() != null) {
                     fecha = p.getFechaCreacion().format(FORMATTER);
                 }
-                Object[] row = new Object[] { p.getId(), fecha, p.getDescripcion(), p.getSolicitante(), p.getDonanteUsername(), p.getObservaciones(), p.isNecesitaVehiculo(), p.isActivo() };
+                Object[] row = new Object[] { p.getId(), fecha, p.getDescripcion(), p.getSolicitante(), p.getDonanteUsername(), p.getPuntajeTotal(), p.getObservaciones(), p.isNecesitaVehiculo(), p.isActivo() };
                 model.addRow(row);
             }
         } catch (Exception e) {

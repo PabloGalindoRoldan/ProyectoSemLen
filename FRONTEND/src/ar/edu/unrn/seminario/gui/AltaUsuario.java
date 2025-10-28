@@ -33,7 +33,6 @@ public class AltaUsuario extends JFrame {
 	 */
 	public AltaUsuario(IApi api) {
 
-		// Obtengo los roles
 		this.roles = api.obtenerRoles();
 
 		setTitle("Alta Usuario");
