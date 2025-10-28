@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -14,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 import ar.edu.unrn.seminario.api.IApi;
 import ar.edu.unrn.seminario.api.MemoryApi;
+import ar.edu.unrn.seminario.dto.PedidoDonacionDTO;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -84,6 +87,31 @@ public class VentanaPrincipal extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		
+		JMenu pedidoDonacionMenu = new JMenu("Pedidos de Donacion");
+		menuBar.add(pedidoDonacionMenu);
+		
+		JMenuItem altaPedidoMenuItem = new JMenuItem("Crear Pedido de Donacion");
+		altaPedidoMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AltaPedido altaPedido = new AltaPedido(api);
+				altaPedido.setLocationRelativeTo(null);
+				altaPedido.setVisible(true);
+			}
+		} );
+		pedidoDonacionMenu.add(altaPedidoMenuItem);
+		
+		JMenuItem listarPedidosMenuItem = new JMenuItem("Listar Pedidos de Donacion");
+		listarPedidosMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoPedidos listadoPedidos = new ListadoPedidos(api);
+				listadoPedidos.setLocationRelativeTo(null);
+				listadoPedidos.setVisible(true);
+			}
+		});
+		pedidoDonacionMenu.add(listarPedidosMenuItem);
+
+		
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import ar.edu.unrn.seminario.dto.RolDTO;
 import ar.edu.unrn.seminario.dto.UsuarioDTO;
+import ar.edu.unrn.seminario.dto.PedidoDonacionDTO;
 
 public interface IApi {
 
@@ -30,4 +31,10 @@ public interface IApi {
 	void activarUsuario(String username); // recuperar el objeto Usuario, implementar el comportamiento de estado.
 
 	void desactivarUsuario(String username); // recuperar el objeto Usuario, implementar el comportamiento de estado.
+
+	// Pedidos de donacion
+	void crearPedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones, boolean necesitaVehiculo, String donanteUsername, boolean activo);
+	List<PedidoDonacionDTO> obtenerPedidosDonacion();
+	PedidoDonacionDTO obtenerPedidoDonacionPorId(Integer id);
+	void eliminarPedidoDonacion(Integer id);
 }

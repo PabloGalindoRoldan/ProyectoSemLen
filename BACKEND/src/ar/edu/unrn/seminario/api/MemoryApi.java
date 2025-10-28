@@ -5,6 +5,7 @@ import java.util.List;
 
 import ar.edu.unrn.seminario.dto.RolDTO;
 import ar.edu.unrn.seminario.dto.UsuarioDTO;
+import ar.edu.unrn.seminario.dto.PedidoDonacionDTO;
 import ar.edu.unrn.seminario.modelo.Rol;
 import ar.edu.unrn.seminario.modelo.Usuario;
 
@@ -12,6 +13,8 @@ public class MemoryApi implements IApi {
 
 	private ArrayList<Rol> roles = new ArrayList();
 	private ArrayList<Usuario> usuarios = new ArrayList<>();
+	private ArrayList<PedidoDonacionDTO> pedidos = new ArrayList<>();
+	private int nextPedidoId = 1;
 
 	public MemoryApi() {
 
@@ -19,6 +22,7 @@ public class MemoryApi implements IApi {
 		this.roles.add(new Rol(1, "ADMIN"));
 		this.roles.add(new Rol(2, "ESTUDIANTE"));
 		this.roles.add(new Rol(3, "INVITADO"));
+		this.roles.add(new Rol(4, "DONANTE"));
 		inicializarUsuarios();
 	}
 
@@ -26,6 +30,7 @@ public class MemoryApi implements IApi {
 		registrarUsuario("admin", "1234", "admin@unrn.edu.ar", "Admin", 1);
 		registrarUsuario("ldifabio", "4", "ldifabio@unrn.edu.ar", "Lucas", 2);
 		registrarUsuario("bjgorosito", "1234", "bjgorosito@unrn.edu.ar", "Bruno", 3);
+		registrarUsuario("pgalindo", "5678", "pablogalindo90@gmail.com", "Pablo", 4);
 
 	}
 
@@ -130,4 +135,51 @@ public class MemoryApi implements IApi {
 		}
 		return null;
 	}
+
+	// ---- Pedidos de donacion ----
+	@Override
+	public void crearPedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones,
+			boolean necesitaVehiculo, String donanteUsername, boolean activo) {
+		// validar que el donante exista y tenga rol DONANTE
+		Usuario donante = buscarUsuario(donanteUsername);
+		if (donante == null) {
+			throw new IllegalArgumentException("Donante no encontrado: " + donanteUsername);
+		}
+		if (donante.getRol() == null || !"DONANTE".equals(donante.getRol().getNombre())) {
+			throw new IllegalArgumentException("Usuario no tiene rol DONANTE: " + donanteUsername);
+		}
+
+		int assignedId = (id == null || id == 0) ? nextPedidoId++ : id;
+		PedidoDonacionDTO dto = new PedidoDonacionDTO(assignedId, descripcion, solicitante, observaciones,
+				necesitaVehiculo, donanteUsername, activo);
+		this.pedidos.add(dto);
+	}
+
+	@Override
+	public List<PedidoDonacionDTO> obtenerPedidosDonacion() {
+		return new ArrayList<>(this.pedidos);
+	}
+
+	@Override
+	public PedidoDonacionDTO obtenerPedidoDonacionPorId(Integer id) {
+		for (PedidoDonacionDTO p : this.pedidos) {
+			if (p.getId().equals(id))
+				return p;
+		}
+		return null;
+	}
+
+	@Override
+	public void eliminarPedidoDonacion(Integer id) {
+		PedidoDonacionDTO encontrado = null;
+		for (PedidoDonacionDTO p : this.pedidos) {
+			if (p.getId().equals(id)) {
+				encontrado = p;
+				break;
+			}
+		}
+		if (encontrado != null)
+			this.pedidos.remove(encontrado);
+	}
+
 }
