@@ -1,5 +1,7 @@
 package ar.edu.unrn.seminario.modelo;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoDonacion {
     private Integer id;
@@ -9,6 +11,7 @@ public class PedidoDonacion {
     private boolean necesitaVehiculo;
     private LocalDateTime fechaCreacion;
     private Usuario donante; 
+    private List<Donacion> donaciones = new ArrayList<>();
     
 	public PedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones, boolean necesitaVehiculo, Usuario donante) {
 		this.id = id;
@@ -18,6 +21,13 @@ public class PedidoDonacion {
 		this.necesitaVehiculo = necesitaVehiculo;
 		this.fechaCreacion = LocalDateTime.now();
 		this.donante = donante;
+	}
+
+	public PedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones, boolean necesitaVehiculo, Usuario donante, List<Donacion> donaciones) {
+		this(id, descripcion, solicitante, observaciones, necesitaVehiculo, donante);
+		if (donaciones != null) {
+			this.donaciones.addAll(donaciones);
+		}
 	}
 
     public Integer getId() {
@@ -47,9 +57,34 @@ public class PedidoDonacion {
 	public void setDonante(Usuario donante) {
 		this.donante = donante;
 	}
-	
+
 	public LocalDateTime getFechaCreacion() {
 		return fechaCreacion;
+	}
+
+	public List<Donacion> getDonaciones() {
+		return new ArrayList<>(this.donaciones);
+	}
+
+	public void setDonaciones(List<Donacion> donaciones) {
+		this.donaciones.clear();
+		if (donaciones != null) this.donaciones.addAll(donaciones);
+	}
+
+	public void addDonacion(Donacion donacion) {
+		if (donacion != null) this.donaciones.add(donacion);
+	}
+
+	public void removeDonacion(Donacion donacion) {
+		this.donaciones.remove(donacion);
+	}
+
+	public int calcularPuntajeTotal() {
+		int total = 0;
+		for (Donacion d : this.donaciones) {
+			total += d.getPuntaje();
+		}
+		return total;
 	}
 		
     @Override

@@ -1,6 +1,8 @@
 package ar.edu.unrn.seminario.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoDonacionDTO {
     private Integer id;
@@ -11,9 +13,11 @@ public class PedidoDonacionDTO {
     private String donanteUsername;
     private LocalDateTime fechaCreacion;
     private boolean activo;
+    private List<DonacionDTO> donaciones = new ArrayList<>();
+    private int puntajeTotal = 0;
 
     public PedidoDonacionDTO(Integer id, String descripcion, String solicitante, String observaciones,
-            boolean necesitaVehiculo, String donanteUsername, boolean activo) {
+            boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo) {
         this.id = id;
         this.descripcion = descripcion;
         this.solicitante = solicitante;
@@ -22,6 +26,15 @@ public class PedidoDonacionDTO {
         this.donanteUsername = donanteUsername;
         this.fechaCreacion = LocalDateTime.now();
         this.activo = activo;
+
+        if (donaciones != null) {
+            this.donaciones.addAll(donaciones);
+            int total = 0;
+            for (DonacionDTO d : donaciones) {
+                total += d.getPuntaje();
+            }
+            this.puntajeTotal = total;
+        }
     }
 
     public Integer getId() {
@@ -57,9 +70,17 @@ public class PedidoDonacionDTO {
     }
 
     public LocalDateTime getFechaCreacion() {
-		return fechaCreacion;
-	}
-    
+        return fechaCreacion;
+    }
+
+    public List<DonacionDTO> getDonaciones() {
+        return new ArrayList<>(this.donaciones);
+    }
+
+    public int getPuntajeTotal() {
+        return puntajeTotal;
+    }
+
     public void setDonanteUsername(String donanteUsername) {
         this.donanteUsername = donanteUsername;
     }

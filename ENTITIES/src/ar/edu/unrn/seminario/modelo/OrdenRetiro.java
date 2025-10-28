@@ -1,53 +1,101 @@
 package ar.edu.unrn.seminario.modelo;
 
-public class OrdenRetiro {
-    private Integer id;
-    private PedidoDonacion pedido;
-    private String fecha;
-    private String responsable;
-    private boolean activo;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-    public OrdenRetiro(Integer id, PedidoDonacion pedido, String fecha, String responsable, boolean activo) {
-        this.id = id;
+public class OrdenRetiro {
+    private Integer idOrdenes;
+    private LocalDateTime fechaGeneracion;
+    private EstadoOrden estado;
+    private List<Visita> visitas = new ArrayList<>();
+    private PedidoDonacion pedido;
+    private Usuario voluntario;
+
+    public OrdenRetiro(Integer idOrdenes, PedidoDonacion pedido, Usuario voluntario) {
+        this.idOrdenes = idOrdenes;
         this.pedido = pedido;
-        this.fecha = fecha;
-        this.responsable = responsable;
-        this.activo = activo;
+        this.voluntario = voluntario;
+        this.fechaGeneracion = LocalDateTime.now();
+        this.estado = EstadoOrden.PENDIENTE;
     }
 
-    public Integer getId() {
-        return id;
+    public OrdenRetiro(Integer idOrdenes, PedidoDonacion pedido, Usuario voluntario, LocalDateTime fechaGeneracion, EstadoOrden estado, List<Visita> visitas) {
+        this.idOrdenes = idOrdenes;
+        this.pedido = pedido;
+        this.voluntario = voluntario;
+        this.fechaGeneracion = fechaGeneracion != null ? fechaGeneracion : LocalDateTime.now();
+        this.estado = estado != null ? estado : EstadoOrden.PENDIENTE;
+        if (visitas != null) this.visitas.addAll(visitas);
+    }
+
+    public Integer getIdOrdenes() {
+        return idOrdenes;
+    }
+
+    public LocalDateTime getFechaGeneracion() {
+        return fechaGeneracion;
+    }
+
+    public EstadoOrden getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoOrden estado) {
+        this.estado = estado;
+    }
+
+    public List<Visita> getVisitas() {
+        return new ArrayList<>(this.visitas);
+    }
+
+    public void setVisitas(List<Visita> visitas) {
+        this.visitas.clear();
+        if (visitas != null) this.visitas.addAll(visitas);
+    }
+
+    public void addVisita(Visita visita) {
+        if (visita != null) this.visitas.add(visita);
+    }
+
+    public void removeVisita(Visita visita) {
+        this.visitas.remove(visita);
     }
 
     public PedidoDonacion getPedido() {
         return pedido;
     }
 
-    public String getFecha() {
-        return fecha;
+    public void setPedido(PedidoDonacion pedido) {
+        this.pedido = pedido;
     }
 
-    public String getResponsable() {
-        return responsable;
+    public Usuario getVoluntario() {
+        return voluntario;
     }
 
-    public boolean isActivo() {
-        return activo;
+    public void setVoluntario(Usuario voluntario) {
+        this.voluntario = voluntario;
     }
 
-    public void activar() {
-        this.activo = true;
+    // state transition helpers
+    public void iniciar() {
+        this.estado = EstadoOrden.EN_EJECUCION;
     }
 
-    public void desactivar() {
-        this.activo = false;
+    public void completar() {
+        this.estado = EstadoOrden.COMPLETADO;
+    }
+
+    public void marcarPendiente() {
+        this.estado = EstadoOrden.PENDIENTE;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((idOrdenes == null) ? 0 : idOrdenes.hashCode());
         return result;
     }
 
@@ -60,10 +108,10 @@ public class OrdenRetiro {
         if (getClass() != obj.getClass())
             return false;
         OrdenRetiro other = (OrdenRetiro) obj;
-        if (id == null) {
-            if (other.id != null)
+        if (idOrdenes == null) {
+            if (other.idOrdenes != null)
                 return false;
-        } else if (!id.equals(other.id))
+        } else if (!idOrdenes.equals(other.idOrdenes))
             return false;
         return true;
     }
