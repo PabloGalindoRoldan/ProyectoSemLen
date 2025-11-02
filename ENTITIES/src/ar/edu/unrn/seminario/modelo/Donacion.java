@@ -35,7 +35,7 @@ public class Donacion {
         this.puntaje = puntaje;
     }
 
-    @Override
+    /*@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -43,7 +43,7 @@ public class Donacion {
         result = prime * result + ((tipoDonacion == null) ? 0 : tipoDonacion.hashCode());
         result = prime * result + puntaje;
         return result;
-    }
+    }*/
 
     @Override
     public boolean equals(Object obj) {
@@ -53,15 +53,15 @@ public class Donacion {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Donacion other = (Donacion) obj;
+        Donacion otro = (Donacion) obj;
         if (categoria == null) {
-            if (other.categoria != null)
+            if (otro.categoria != null)
                 return false;
-        } else if (!categoria.equals(other.categoria))
+        } else if (!categoria.equals(otro.categoria))
             return false;
-        if (tipoDonacion != other.tipoDonacion)
+        if (tipoDonacion != otro.tipoDonacion)
             return false;
-        if (puntaje != other.puntaje)
+        if (puntaje != otro.puntaje)
             return false;
         return true;
     }

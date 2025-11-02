@@ -24,9 +24,17 @@ public class OrdenRetiro {
         this.idOrdenes = idOrdenes;
         this.pedido = pedido;
         this.voluntario = voluntario;
-        this.fechaGeneracion = fechaGeneracion != null ? fechaGeneracion : LocalDateTime.now();
-        this.estado = estado != null ? estado : EstadoOrden.PENDIENTE;
-        if (visitas != null) this.visitas.addAll(visitas);
+        this.fechaGeneracion = fechaGeneracion;
+        if (fechaGeneracion == null) {
+        	fechaGeneracion = LocalDateTime.now();
+        };
+        this.estado = estado;
+        if (estado == null) {
+        	estado = EstadoOrden.PENDIENTE;
+        }		
+        if (visitas != null) {
+        	this.visitas.addAll(visitas);
+        } 
     }
 
     public Integer getIdOrdenes() {
@@ -51,7 +59,9 @@ public class OrdenRetiro {
 
     public void setVisitas(List<Visita> visitas) {
         this.visitas.clear();
-        if (visitas != null) this.visitas.addAll(visitas);
+        if (visitas != null) {
+        	this.visitas.addAll(visitas);
+        }
     }
 
     public void addVisita(Visita visita) {
@@ -78,7 +88,6 @@ public class OrdenRetiro {
         this.voluntario = voluntario;
     }
 
-    // state transition helpers
     public void iniciar() {
         this.estado = EstadoOrden.EN_EJECUCION;
     }
@@ -107,11 +116,11 @@ public class OrdenRetiro {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OrdenRetiro other = (OrdenRetiro) obj;
+        OrdenRetiro otro = (OrdenRetiro) obj;
         if (idOrdenes == null) {
-            if (other.idOrdenes != null)
+            if (otro.idOrdenes != null)
                 return false;
-        } else if (!idOrdenes.equals(other.idOrdenes))
+        } else if (!idOrdenes.equals(otro.idOrdenes))
             return false;
         return true;
     }
