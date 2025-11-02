@@ -7,7 +7,6 @@ import java.util.List;
 public class PedidoDonacionDTO {
     private Integer id;
     private String descripcion;
-    private String solicitante;
     private String observaciones;
     private boolean necesitaVehiculo;
     private String donanteUsername;
@@ -16,11 +15,10 @@ public class PedidoDonacionDTO {
     private List<DonacionDTO> donaciones = new ArrayList<>();
     private int puntajeTotal = 0;
 
-    public PedidoDonacionDTO(Integer id, String descripcion, String solicitante, String observaciones,
+    public PedidoDonacionDTO(Integer id, String descripcion, String observaciones,
             boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo) {
         this.id = id;
         this.descripcion = descripcion;
-        this.solicitante = solicitante;
         this.observaciones = observaciones;
         this.necesitaVehiculo = necesitaVehiculo;
         this.donanteUsername = donanteUsername;
@@ -43,10 +41,6 @@ public class PedidoDonacionDTO {
 
     public String getDescripcion() {
         return descripcion;
-    }
-
-    public String getSolicitante() {
-        return solicitante;
     }
 
     public String getObservaciones() {

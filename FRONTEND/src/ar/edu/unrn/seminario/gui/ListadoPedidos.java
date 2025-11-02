@@ -37,7 +37,7 @@ public class ListadoPedidos extends JFrame {
         contentPane.setLayout(null);
         setContentPane(contentPane);
 
-        String[] columns = new String[] { "ID", "FechaCreacion", "Descripcion", "Solicitante", "Donante", "PuntajeTotal", "Observaciones", "NecesitaVehiculo", "Activo" };
+        String[] columns = new String[] { "ID", "FechaCreacion", "Descripcion", "Donante", "PuntajeTotal", "Observaciones", "NecesitaVehiculo", "Activo" };
         model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -155,7 +155,7 @@ public class ListadoPedidos extends JFrame {
                 if (p.getFechaCreacion() != null) {
                     fecha = p.getFechaCreacion().format(FORMATTER);
                 }
-                Object[] row = new Object[] { p.getId(), fecha, p.getDescripcion(), p.getSolicitante(), p.getDonanteUsername(), p.getPuntajeTotal(), p.getObservaciones(), p.isNecesitaVehiculo(), p.isActivo() };
+                Object[] row = new Object[] { p.getId(), fecha, p.getDescripcion(), p.getDonanteUsername(), p.getPuntajeTotal(), p.getObservaciones(), p.isNecesitaVehiculo(), p.isActivo() };
                 model.addRow(row);
             }
         } catch (Exception e) {

@@ -26,7 +26,6 @@ public class AltaPedido extends JFrame {
 
     private JPanel contentPane;
     private JTextField descripcionField;
-    private JTextField solicitanteField;
     private JTextField observacionesField;
     private JCheckBox necesitaVehiculoCheckBox;
     private JComboBox<String> donanteComboBox;
@@ -57,20 +56,12 @@ public class AltaPedido extends JFrame {
         descripcionField.setBounds(140, 17, 420, 22);
         contentPane.add(descripcionField);
 
-        JLabel solicitanteLabel = new JLabel("Solicitante:");
-        solicitanteLabel.setBounds(20, 55, 100, 16);
-        contentPane.add(solicitanteLabel);
-
-        solicitanteField = new JTextField();
-        solicitanteField.setBounds(140, 52, 200, 22);
-        contentPane.add(solicitanteField);
-
         JLabel observacionesLabel = new JLabel("Observaciones:");
-        observacionesLabel.setBounds(20, 90, 100, 16);
+        observacionesLabel.setBounds(20, 50, 100, 16);
         contentPane.add(observacionesLabel);
 
         observacionesField = new JTextField();
-        observacionesField.setBounds(140, 87, 420, 22);
+        observacionesField.setBounds(140, 47, 420, 22);
         contentPane.add(observacionesField);
 
         necesitaVehiculoCheckBox = new JCheckBox("Necesita vehiculo");
@@ -179,7 +170,6 @@ public class AltaPedido extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     String descripcion = descripcionField.getText().trim();
-                    String solicitante = solicitanteField.getText().trim();
                     String observaciones = observacionesField.getText().trim();
                     boolean necesitaVehiculo = necesitaVehiculoCheckBox.isSelected();
 
@@ -205,7 +195,7 @@ public class AltaPedido extends JFrame {
                         donaciones.add(new DonacionDTO(tipo, categoria, puntaje));
                     }
 
-                    api.crearPedidoDonacion(null, descripcion, solicitante, observaciones, necesitaVehiculo,
+                    api.crearPedidoDonacion(null, descripcion, observaciones, necesitaVehiculo,
                             donanteUsername, donaciones, true);
 
                     JOptionPane.showMessageDialog(null, "Pedido creado con exito", "Info",

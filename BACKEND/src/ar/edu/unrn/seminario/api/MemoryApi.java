@@ -43,7 +43,8 @@ public class MemoryApi implements IApi {
 		registrarUsuario("mvoluntario", "v123", "vol@example.com", "Voluntario", 5);
 
 	}
-
+	
+	
 	@Override
 	public void registrarUsuario(String username, String password, String email, String nombre, Integer rol) {
 
@@ -152,8 +153,8 @@ public class MemoryApi implements IApi {
 
 	// ---- Pedidos de donacion ----
 	@Override
-	public void crearPedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones,
-			boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo) {
+	public void crearPedidoDonacion(Integer id, String descripcion, String observaciones,
+					boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo) {
 		Usuario donante = buscarUsuario(donanteUsername);
 		if (donante == null) {
 			throw new IllegalArgumentException("Donante no encontrado: " + donanteUsername);
@@ -163,7 +164,7 @@ public class MemoryApi implements IApi {
 		}
 
 		int assignedId = (id == null || id == 0) ? nextPedidoId++ : id;
-		PedidoDonacionDTO dto = new PedidoDonacionDTO(assignedId, descripcion, solicitante, observaciones,
+		PedidoDonacionDTO dto = new PedidoDonacionDTO(assignedId, descripcion, observaciones,
 				necesitaVehiculo, donanteUsername, donaciones, activo);
 		this.pedidos.add(dto);
 	}

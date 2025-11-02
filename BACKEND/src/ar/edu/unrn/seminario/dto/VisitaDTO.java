@@ -31,24 +31,76 @@ public class VisitaDTO {
         this.visitaFinal = visitaFinal;
     }
 
-    public Integer getId() { return id; }
-    public String getVisitante() { return visitante; }
-    public LocalDateTime getFechaHora() { return fechaHora; }
-    public String getMotivo() { return motivo; }
-    public boolean isConfirmada() { return confirmada; }
-    public int getCantidadBienesRecogidos() { return cantidadBienesRecogidos; }
-    public List<ArticuloDTO> getArticulosRecogidos() { return new ArrayList<>(this.articulosRecogidos); }
-    public String getObservaciones() { return observaciones; }
-    public Integer getOrdenRetiroId() { return ordenRetiroId; }
-    public boolean isVisitaFinal() { return visitaFinal; }
+    public Integer getId() { 
+    	return id; 
+    }
+    
+    public String getVisitante() {
+    	return visitante;
+    }
+    
+    public LocalDateTime getFechaHora() {
+    	return fechaHora;
+    }
+    
+    public String getMotivo() {
+    	return motivo; 
+    }
+    
+    public boolean isConfirmada() {
+    	return confirmada; 
+    }
+    
+    public int getCantidadBienesRecogidos() {
+    	return cantidadBienesRecogidos;
+    }
+    
+    public List<ArticuloDTO> getArticulosRecogidos() {
+    	return new ArrayList<>(this.articulosRecogidos);
+    }
+    
+    public String getObservaciones() { 
+    	return observaciones;
+    
+    }
+    
+    public Integer getOrdenRetiroId() {
+    	return ordenRetiroId;
+    }
+    
+    public boolean isVisitaFinal() { 
+    	return visitaFinal; 
+    }
+    
 
-    public void setId(Integer id) { this.id = id; }
-    public void setOrdenRetiroId(Integer ordenRetiroId) { this.ordenRetiroId = ordenRetiroId; }
+    public void setId(Integer id) {
+    	this.id = id; 
+    }
+    
+    public void setOrdenRetiroId(Integer ordenRetiroId) {
+    	this.ordenRetiroId = ordenRetiroId;
+    }
 
-    public void setConfirmada(boolean confirmada) { this.confirmada = confirmada; }
-    public void setCantidadBienesRecogidos(int cantidad) { this.cantidadBienesRecogidos = cantidad; }
-    public void setArticulosRecogidos(List<ArticuloDTO> articulos) { this.articulosRecogidos.clear(); if (articulos != null) this.articulosRecogidos.addAll(articulos); }
-    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+    public void setConfirmada(boolean confirmada) { 
+    	this.confirmada = confirmada;
+    	
+    }
+    
+    public void setCantidadBienesRecogidos(int cantidad) {
+    	this.cantidadBienesRecogidos = cantidad; 
+    }
+    
+    public void setArticulosRecogidos(List<ArticuloDTO> articulos) {
+    	this.articulosRecogidos.clear();
+    	if (articulos != null) {
+    		this.articulosRecogidos.addAll(articulos);
+    	}
+    }
+    
+    public void setObservaciones(String observaciones) {
+    	this.observaciones = observaciones;
+    }
+    
     public void setVisitaFinal(boolean visitaFinal) { this.visitaFinal = visitaFinal; }
     public void setFechaHora(LocalDateTime fechaHora) { this.fechaHora = fechaHora; }
 }
