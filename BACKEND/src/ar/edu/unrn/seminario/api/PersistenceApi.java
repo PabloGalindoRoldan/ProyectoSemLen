@@ -54,7 +54,7 @@ public class PersistenceApi implements IApi {
         try {
             Usuario u = usuarioDAO.find(username);
             if (u == null) return null;
-            String rolNombre = u.getRol() != null ? String.valueOf(u.getRol().getCodigo()) : null;
+            String rolNombre = u.getRol() != null ? u.getRol().getNombre() : null;
             return new UsuarioDTO(u.getUsuario(), u.getContrasena(), u.getNombre(), u.getEmail(), rolNombre, u.isActivo(), u.obtenerEstado());
         } catch (Exception e) {
             throw new RuntimeException("Error obtaining usuario", e);
@@ -155,7 +155,7 @@ public class PersistenceApi implements IApi {
             List<Usuario> usuarios = usuarioDAO.findAll();
             List<UsuarioDTO> dtos = new ArrayList<>();
             for (Usuario u : usuarios) {
-                String rolNombre = u.getRol() != null ? String.valueOf(u.getRol().getCodigo()) : null;
+                String rolNombre = u.getRol() != null ? u.getRol().getNombre() : null;
                 dtos.add(new UsuarioDTO(u.getUsuario(), u.getContrasena(), u.getNombre(), u.getEmail(), rolNombre, u.isActivo(), u.obtenerEstado()));
             }
             return dtos;
