@@ -6,25 +6,23 @@ import java.util.List;
 public class PedidoDonacion {
     private Integer id;
     private String descripcion;
-    private String solicitante;
     private String observaciones;
     private boolean necesitaVehiculo;
     private LocalDateTime fechaCreacion;
     private Usuario donante; 
     private List<Donacion> donaciones = new ArrayList<>();
     
-	public PedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones, boolean necesitaVehiculo, Usuario donante) {
+	public PedidoDonacion(Integer id, String descripcion, String observaciones, boolean necesitaVehiculo, Usuario donante) {
 		this.id = id;
 		this.descripcion = descripcion;
-		this.solicitante = solicitante;
 		this.observaciones = observaciones;
 		this.necesitaVehiculo = necesitaVehiculo;
 		this.fechaCreacion = LocalDateTime.now();
 		this.donante = donante;
 	}
 
-	public PedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones, boolean necesitaVehiculo, Usuario donante, List<Donacion> donaciones) {
-		this(id, descripcion, solicitante, observaciones, necesitaVehiculo, donante);
+	public PedidoDonacion(Integer id, String descripcion, String observaciones, boolean necesitaVehiculo, Usuario donante, List<Donacion> donaciones) {
+		this(id, descripcion, observaciones, necesitaVehiculo, donante);
 		if (donaciones != null) {
 			this.donaciones.addAll(donaciones);
 		}
@@ -38,10 +36,6 @@ public class PedidoDonacion {
         return descripcion;
     }
 
-    public String getSolicitante() {
-        return solicitante;
-    }
-    
 	public String getObservaciones() {
 		return observaciones;
 	}

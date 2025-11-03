@@ -36,7 +36,7 @@ public interface IApi {
 	void desactivarUsuario(String username); // recuperar el objeto Usuario, implementar el comportamiento de estado.
 
 	// Pedidos de donacion
-	void crearPedidoDonacion(Integer id, String descripcion, String solicitante, String observaciones, boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo);
+	void crearPedidoDonacion(Integer id, String descripcion, String observaciones, boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo);
 	List<PedidoDonacionDTO> obtenerPedidosDonacion();
 	PedidoDonacionDTO obtenerPedidoDonacionPorId(Integer id);
 	void eliminarPedidoDonacion(Integer id);
