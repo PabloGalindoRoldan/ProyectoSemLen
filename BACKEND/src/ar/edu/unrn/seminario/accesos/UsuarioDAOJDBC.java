@@ -15,8 +15,9 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
     private static final String INSERT_SQL = "INSERT INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, activo) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_SQL = "UPDATE usuarios SET contrasena = ?, nombre = ?, email = ?, rol_codigo = ?, activo = ? WHERE usuario = ?";
     private static final String DELETE_SQL = "DELETE FROM usuarios WHERE usuario = ?";
-    private static final String SELECT_BY_ID = "SELECT usuario, contrasena, nombre, email, rol_codigo, activo FROM usuarios WHERE usuario = ?";
-    private static final String SELECT_ALL = "SELECT usuario, contrasena, nombre, email, rol_codigo, activo FROM usuarios";
+    // join roles to retrieve role name as well
+    private static final String SELECT_BY_ID = "SELECT u.usuario, u.contrasena, u.nombre, u.email, u.rol_codigo, r.nombre AS rol_nombre, u.activo FROM usuarios u LEFT JOIN roles r ON u.rol_codigo = r.codigo WHERE u.usuario = ?";
+    private static final String SELECT_ALL = "SELECT u.usuario, u.contrasena, u.nombre, u.email, u.rol_codigo, r.nombre AS rol_nombre, u.activo FROM usuarios u LEFT JOIN roles r ON u.rol_codigo = r.codigo";
 
     @Override
     public void create(Usuario usuario) throws Exception {
@@ -76,9 +77,11 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                     String nombre = rs.getString("nombre");
                     String email = rs.getString("email");
                     Integer rolCodigo = rs.getObject("rol_codigo") == null ? null : rs.getInt("rol_codigo");
+                    String rolNombre = rs.getString("rol_nombre");
                     boolean activo = rs.getBoolean("activo");
                     Rol rol = new Rol();
                     rol.setCodigo(rolCodigo);
+                    if (rolNombre != null) rol.setNombre(rolNombre);
                     Usuario usuario = new Usuario(u, contrasena, nombre, email, rol);
                     if (activo) usuario.activar();
                     return usuario;
@@ -100,9 +103,11 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 String nombre = rs.getString("nombre");
                 String email = rs.getString("email");
                 Integer rolCodigo = rs.getObject("rol_codigo") == null ? null : rs.getInt("rol_codigo");
+                String rolNombre = rs.getString("rol_nombre");
                 boolean activo = rs.getBoolean("activo");
                 Rol rol = new Rol();
                 rol.setCodigo(rolCodigo);
+                if (rolNombre != null) rol.setNombre(rolNombre);
                 Usuario usuario = new Usuario(u, contrasena, nombre, email, rol);
                 if (activo) usuario.activar();
                 resultados.add(usuario);

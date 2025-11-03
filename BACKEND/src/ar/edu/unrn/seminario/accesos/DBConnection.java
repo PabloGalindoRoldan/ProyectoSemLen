@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DBConnection {
     // Update these constants to match your local database configuration
-    private static final String URL = "jdbc:mysql://localhost:3306/seminario_2024_1?serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/seminario?serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = ""; // set your DB password
 
