@@ -15,7 +15,6 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
     private static final String INSERT_SQL = "INSERT INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, activo) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_SQL = "UPDATE usuarios SET contrasena = ?, nombre = ?, email = ?, rol_codigo = ?, activo = ? WHERE usuario = ?";
     private static final String DELETE_SQL = "DELETE FROM usuarios WHERE usuario = ?";
-    // join roles to retrieve role name as well
     private static final String SELECT_BY_ID = "SELECT u.usuario, u.contrasena, u.nombre, u.email, u.rol_codigo, r.nombre AS rol_nombre, u.activo FROM usuarios u LEFT JOIN roles r ON u.rol_codigo = r.codigo WHERE u.usuario = ?";
     private static final String SELECT_ALL = "SELECT u.usuario, u.contrasena, u.nombre, u.email, u.rol_codigo, r.nombre AS rol_nombre, u.activo FROM usuarios u LEFT JOIN roles r ON u.rol_codigo = r.codigo";
 
@@ -31,7 +30,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             ps.setBoolean(6, usuario.isActivo());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error creating usuario", e);
+            throw new Exception("Error creando usuario", e);
         }
     }
 
@@ -47,7 +46,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             ps.setString(6, usuario.getUsuario());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error updating usuario", e);
+            throw new Exception("Error actualizando usuario", e);
         }
     }
 
@@ -57,7 +56,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             ps.setString(1, username);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error deleting usuario", e);
+            throw new Exception("Error borrando usuario", e);
         }
     }
 
@@ -88,7 +87,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new Exception("Error finding usuario", e);
+            throw new Exception("Error encontrando usuario", e);
         }
         return null;
     }
@@ -113,7 +112,7 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 resultados.add(usuario);
             }
         } catch (SQLException e) {
-            throw new Exception("Error finding all usuarios", e);
+            throw new Exception("Error al buscar todos los usuarios", e);
         }
         return resultados;
     }

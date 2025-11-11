@@ -29,10 +29,9 @@ public class PersistenceApi implements IApi {
     private RolDAOJDBC rolDAO = new RolDAOJDBC();
 
     public PersistenceApi() {
-        // no in-memory synchronization required now
     }
 
-    // --- Users ---
+    // Usuarios
     @Override
     public void registrarUsuario(String username, String password, String email, String nombre, Integer rol) {
         try {
@@ -190,7 +189,7 @@ public class PersistenceApi implements IApi {
         }
     }
 
-    // --- Pedidos ---
+    // Pedidos
     private static final String INSERT_PEDIDO = "INSERT INTO pedidos (id, descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_PEDIDOS = "SELECT id, descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total FROM pedidos";
     private static final String SELECT_PEDIDO_BY_ID = "SELECT id, descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total FROM pedidos WHERE id = ?";
@@ -218,8 +217,6 @@ public class PersistenceApi implements IApi {
                 ps.setInt(8, puntaje);
                 ps.executeUpdate();
             }
-            // If insert used id = 0 and DB uses auto-increment, we assume DB assigned id; but code using id value is rare.
-            // Find last inserted id if necessary
             Integer insertedId = null;
             try (PreparedStatement last = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
                 try (ResultSet rs = last.executeQuery()) {
@@ -321,7 +318,7 @@ public class PersistenceApi implements IApi {
         }
     }
 
-    // --- Ordenes de retiro ---
+    // Ordenes de retiro
     private static final String INSERT_ORDEN = "INSERT INTO ordenes_retiro (id, pedido_id, voluntario_username, fecha_generacion, estado) VALUES (?, ?, ?, ?, ?)";
     private static final String SELECT_ORDENES = "SELECT id, pedido_id, voluntario_username, fecha_generacion, estado FROM ordenes_retiro";
     private static final String SELECT_ORDEN_BY_ID = "SELECT id, pedido_id, voluntario_username, fecha_generacion, estado FROM ordenes_retiro WHERE id = ?";
@@ -332,22 +329,21 @@ public class PersistenceApi implements IApi {
     @Override
     public void crearOrdenRetiro(Integer id, Integer pedidoId, String voluntarioUsername, String estado) {
         try (Connection conn = DBConnection.getConnection()) {
-            // ensure pedido exists
+            // asegurarse de que exista
             try (PreparedStatement check = conn.prepareStatement("SELECT id FROM pedidos WHERE id = ?")) {
                 check.setInt(1, pedidoId);
                 try (ResultSet rs = check.executeQuery()) {
                     if (!rs.next()) throw new RuntimeException("Pedido not found: " + pedidoId);
                 }
             }
-            // ensure voluntario exists and has role VOLUNTARIO - best effort check
+            // asegurarse que exita y tenga el rol adecuado
             try {
                 Usuario u = usuarioDAO.find(voluntarioUsername);
                 if (u == null) throw new RuntimeException("Voluntario not found: " + voluntarioUsername);
                 if (u.getRol() == null || !"VOLUNTARIO".equals(u.getRol().getNombre())) {
-                    // role name may not be populated in DB; skip strict check to avoid failing the operation
                 }
             } catch (Exception e) {
-                // ignore and continue
+                // ignorar y seguir
             }
 
             try (PreparedStatement ps = conn.prepareStatement(INSERT_ORDEN)) {
@@ -445,7 +441,7 @@ public class PersistenceApi implements IApi {
         }
     }
 
-    // --- Visitas ---
+    // Visitas
     private static final String INSERT_VISITA = "INSERT INTO visitas (visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_VISITAS = "SELECT id, visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal FROM visitas";
     private static final String SELECT_VISITA_BY_ID = "SELECT id, visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal FROM visitas WHERE id = ?";
@@ -485,7 +481,7 @@ public class PersistenceApi implements IApi {
                     ps2.executeBatch();
                 }
             }
-            // if final visit, update orden status to COMPLETADO
+            // if visita final, actualizar status a COMPLETADO
             if (visita.isVisitaFinal() && visita.getOrdenRetiroId() != null) {
                 try (PreparedStatement psUpd = conn.prepareStatement("UPDATE ordenes_retiro SET estado = 'COMPLETADO' WHERE id = ?")) {
                     psUpd.setInt(1, visita.getOrdenRetiroId());
@@ -535,7 +531,7 @@ public class PersistenceApi implements IApi {
         }
     }
 
-    // --- helpers ---
+    // helpers
     private VisitaDTO mapVisitaFromResultSet(ResultSet rs) throws SQLException {
         Integer id = rs.getInt("id");
         String visitante = rs.getString("visitante");

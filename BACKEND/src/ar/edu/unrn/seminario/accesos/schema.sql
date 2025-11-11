@@ -1,17 +1,13 @@
--- Schema for seminario
--- Run in MySQL to create DB and tables
 
 CREATE DATABASE IF NOT EXISTS seminario DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE seminario;
 
--- roles table (simple)
 CREATE TABLE IF NOT EXISTS roles (
   codigo INT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
   activo BOOLEAN DEFAULT TRUE
 );
 
--- usuarios table
 CREATE TABLE IF NOT EXISTS usuarios (
   usuario VARCHAR(100) PRIMARY KEY,
   contrasena VARCHAR(255) NOT NULL,
@@ -22,7 +18,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
   FOREIGN KEY (rol_codigo) REFERENCES roles(codigo)
 );
 
--- pedidos table
 CREATE TABLE IF NOT EXISTS pedidos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   descripcion TEXT,

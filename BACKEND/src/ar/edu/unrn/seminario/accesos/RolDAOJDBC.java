@@ -26,7 +26,7 @@ public class RolDAOJDBC implements RolDAO {
             ps.setBoolean(3, rol.isActivo());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error creating rol", e);
+            throw new Exception("Error creando rol", e);
         }
     }
 
@@ -38,7 +38,7 @@ public class RolDAOJDBC implements RolDAO {
             ps.setInt(3, rol.getCodigo());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error updating rol", e);
+            throw new Exception("Error actualizando rol", e);
         }
     }
 
@@ -48,7 +48,7 @@ public class RolDAOJDBC implements RolDAO {
             ps.setInt(1, codigo);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error deleting rol", e);
+            throw new Exception("Error eliminando rol", e);
         }
     }
 
@@ -69,7 +69,7 @@ public class RolDAOJDBC implements RolDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new Exception("Error finding rol", e);
+            throw new Exception("Error encontrando rol", e);
         }
         return null;
     }
@@ -84,7 +84,7 @@ public class RolDAOJDBC implements RolDAO {
                 resultados.add(rol);
             }
         } catch (SQLException e) {
-            throw new Exception("Error finding all roles", e);
+            throw new Exception("Error encontrando todos los roles", e);
         }
         return resultados;
     }
