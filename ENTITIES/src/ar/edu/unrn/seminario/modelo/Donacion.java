@@ -4,6 +4,7 @@ public class Donacion {
     private TipoDonacion tipoDonacion;
     private String categoria;
     private int puntaje;
+    private int id;
 
     public Donacion(TipoDonacion tipoDonacion, String categoria, int puntaje) {
         this.tipoDonacion = tipoDonacion;
@@ -33,6 +34,14 @@ public class Donacion {
 
     public void setPuntaje(int puntaje) {
         this.puntaje = puntaje;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
