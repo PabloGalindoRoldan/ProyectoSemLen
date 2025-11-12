@@ -1,0 +1,9 @@
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\Articulo.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\Donacion.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\EstadoOrden.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\OrdenRetiro.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\PedidoDonacion.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\Rol.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\TipoDonacion.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\Usuario.java
+C:\Users\Lightning\Desktop\ECLIPSE\proyecto\ENTITIES\src\ar\edu\unrn\seminario\modelo\Visita.java

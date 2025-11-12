@@ -1,5 +1,7 @@
 package ar.edu.unrn.seminario.modelo;
 
+import ar.edu.unrn.seminario.exception.DomainValidationException;
+
 public class Usuario {
 	private String usuario;
 	private String contrasena;
@@ -22,6 +24,7 @@ public class Usuario {
 	}
 
 	public void setUsuario(String usuario) {
+		if (usuario == null || usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario is required");
 		this.usuario = usuario;
 	}
 
@@ -30,6 +33,7 @@ public class Usuario {
 	}
 
 	public void setContrasena(String contrasena) {
+		if (contrasena == null || contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena is required");
 		this.contrasena = contrasena;
 	}
 
@@ -38,6 +42,7 @@ public class Usuario {
 	}
 
 	public void setNombre(String nombre) {
+		if (nombre == null || nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre is required");
 		this.nombre = nombre;
 	}
 
@@ -46,6 +51,9 @@ public class Usuario {
 	}
 
 	public void setEmail(String email) {
+		if (email != null && !email.trim().isEmpty()) {
+			if (!email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
+		}
 		this.email = email;
 	}
 
@@ -73,6 +81,14 @@ public class Usuario {
 	public void desactivar() {
 		if (isActivo())
 			this.activo = false;
+	}
+
+	// entity validation method
+	public void validate() {
+		if (this.usuario == null || this.usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario is required");
+		if (this.contrasena == null || this.contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena is required");
+		if (this.nombre == null || this.nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre is required");
+		if (this.email != null && !this.email.trim().isEmpty() && !this.email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
 	}
 
 	@Override

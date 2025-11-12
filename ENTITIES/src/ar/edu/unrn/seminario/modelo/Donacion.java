@@ -1,5 +1,7 @@
 package ar.edu.unrn.seminario.modelo;
 
+import ar.edu.unrn.seminario.exception.DomainValidationException;
+
 public class Donacion {
     private TipoDonacion tipoDonacion;
     private String categoria;
@@ -42,6 +44,13 @@ public class Donacion {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    // validation
+    public void validate() {
+        if (this.tipoDonacion == null) throw new DomainValidationException("Donacion.tipoDonacion is required");
+        if (this.categoria == null || this.categoria.trim().isEmpty()) throw new DomainValidationException("Donacion.categoria is required");
+        if (this.puntaje < 0) throw new DomainValidationException("Donacion.puntaje cannot be negative");
     }
 
     @Override

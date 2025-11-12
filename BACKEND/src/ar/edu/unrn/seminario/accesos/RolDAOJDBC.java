@@ -6,10 +6,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ar.edu.unrn.seminario.modelo.Rol;
+import ar.edu.unrn.seminario.exception.PersistenceException;
 
 public class RolDAOJDBC implements RolDAO {
+
+    private static final Logger logger = Logger.getLogger(RolDAOJDBC.class.getName());
 
     private static final String INSERT_SQL = "INSERT INTO roles (codigo, nombre, activo) VALUES (?, ?, ?)";
     private static final String UPDATE_SQL = "UPDATE roles SET nombre = ?, activo = ? WHERE codigo = ?";
@@ -26,7 +31,8 @@ public class RolDAOJDBC implements RolDAO {
             ps.setBoolean(3, rol.isActivo());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error creando rol", e);
+            logger.log(Level.SEVERE, "Error creating rol: " + (rol == null ? null : rol.getCodigo()), e);
+            throw new PersistenceException("Error creando rol", e);
         }
     }
 
@@ -38,7 +44,8 @@ public class RolDAOJDBC implements RolDAO {
             ps.setInt(3, rol.getCodigo());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error actualizando rol", e);
+            logger.log(Level.SEVERE, "Error updating rol: " + (rol == null ? null : rol.getCodigo()), e);
+            throw new PersistenceException("Error actualizando rol", e);
         }
     }
 
@@ -48,7 +55,8 @@ public class RolDAOJDBC implements RolDAO {
             ps.setInt(1, codigo);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error eliminando rol", e);
+            logger.log(Level.SEVERE, "Error deleting rol: " + codigo, e);
+            throw new PersistenceException("Error eliminando rol", e);
         }
     }
 
@@ -69,7 +77,8 @@ public class RolDAOJDBC implements RolDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new Exception("Error encontrando rol", e);
+            logger.log(Level.SEVERE, "Error finding rol: " + codigo, e);
+            throw new PersistenceException("Error encontrando rol", e);
         }
         return null;
     }
@@ -84,7 +93,8 @@ public class RolDAOJDBC implements RolDAO {
                 resultados.add(rol);
             }
         } catch (SQLException e) {
-            throw new Exception("Error encontrando todos los roles", e);
+            logger.log(Level.SEVERE, "Error finding all roles", e);
+            throw new PersistenceException("Error encontrando todos los roles", e);
         }
         return resultados;
     }
@@ -99,7 +109,8 @@ public class RolDAOJDBC implements RolDAO {
                 resultados.add(rol);
             }
         } catch (SQLException e) {
-            throw new Exception("Error finding active roles", e);
+            logger.log(Level.SEVERE, "Error finding active roles", e);
+            throw new PersistenceException("Error finding active roles", e);
         }
         return resultados;
     }

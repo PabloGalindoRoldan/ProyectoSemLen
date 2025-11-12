@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.unrn.seminario.exception.DomainValidationException;
+
 public class Visita {
     private Integer id;
     private String visitante;
@@ -97,6 +99,21 @@ public class Visita {
 
     public void setVisitaFinal(boolean visitaFinal) {
         this.visitaFinal = visitaFinal;
+    }
+
+    // validation
+    public void validate() {
+        if (this.visitante == null || this.visitante.trim().isEmpty()) throw new DomainValidationException("Visita.visitante is required");
+        if (this.fechaHora == null) throw new DomainValidationException("Visita.fechaHora is required");
+        if (this.motivo == null || this.motivo.trim().isEmpty()) throw new DomainValidationException("Visita.motivo is required");
+        if (this.cantidadBienesRecogidos < 0) throw new DomainValidationException("Visita.cantidadBienesRecogidos cannot be negative");
+        if (this.articulosRecogidos != null) {
+            for (Articulo a : this.articulosRecogidos) {
+                if (a == null) throw new DomainValidationException("Visita contains null Articulo");
+                if (a.getNombre() == null || a.getNombre().trim().isEmpty()) throw new DomainValidationException("Articulo.nombre is required");
+                if (a.getCantidad() < 0) throw new DomainValidationException("Articulo.cantidad cannot be negative");
+            }
+        }
     }
 
     @Override

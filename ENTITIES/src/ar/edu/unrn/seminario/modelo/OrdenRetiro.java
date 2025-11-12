@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.unrn.seminario.exception.DomainValidationException;
+
 public class OrdenRetiro {
     private Integer idOrdenes;
     private LocalDateTime fechaGeneracion;
@@ -33,7 +35,7 @@ public class OrdenRetiro {
         	estado = EstadoOrden.PENDIENTE;
         }		
         if (visitas != null) {
-        	this.visitas.addAll(visitas);
+         this.visitas.addAll(visitas);
         } 
     }
 
@@ -60,7 +62,7 @@ public class OrdenRetiro {
     public void setVisitas(List<Visita> visitas) {
         this.visitas.clear();
         if (visitas != null) {
-        	this.visitas.addAll(visitas);
+         this.visitas.addAll(visitas);
         }
     }
 
@@ -98,6 +100,16 @@ public class OrdenRetiro {
 
     public void marcarPendiente() {
         this.estado = EstadoOrden.PENDIENTE;
+    }
+
+    // validation
+    public void validate() {
+        if (this.pedido == null) throw new DomainValidationException("OrdenRetiro.pedido is required");
+        if (this.visitas != null) {
+            for (Visita v : this.visitas) {
+                if (v == null) throw new DomainValidationException("OrdenRetiro contains null Visita");
+            }
+        }
     }
 
     @Override

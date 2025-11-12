@@ -6,11 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ar.edu.unrn.seminario.modelo.Rol;
 import ar.edu.unrn.seminario.modelo.Usuario;
+import ar.edu.unrn.seminario.exception.PersistenceException;
 
 public class UsuarioDAOJDBC implements UsuarioDAO {
+
+    private static final Logger logger = Logger.getLogger(UsuarioDAOJDBC.class.getName());
 
     private static final String INSERT_SQL = "INSERT INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, activo) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String UPDATE_SQL = "UPDATE usuarios SET contrasena = ?, nombre = ?, email = ?, rol_codigo = ?, activo = ? WHERE usuario = ?";
@@ -30,7 +35,8 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             ps.setBoolean(6, usuario.isActivo());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error creando usuario", e);
+            logger.log(Level.SEVERE, "Error creating usuario: " + (usuario == null ? null : usuario.getUsuario()), e);
+            throw new PersistenceException("Error creating usuario", e);
         }
     }
 
@@ -46,7 +52,8 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             ps.setString(6, usuario.getUsuario());
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error actualizando usuario", e);
+            logger.log(Level.SEVERE, "Error updating usuario: " + (usuario == null ? null : usuario.getUsuario()), e);
+            throw new PersistenceException("Error updating usuario", e);
         }
     }
 
@@ -56,7 +63,8 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
             ps.setString(1, username);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new Exception("Error borrando usuario", e);
+            logger.log(Level.SEVERE, "Error deleting usuario: " + username, e);
+            throw new PersistenceException("Error deleting usuario", e);
         }
     }
 
@@ -87,7 +95,8 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new Exception("Error encontrando usuario", e);
+            logger.log(Level.SEVERE, "Error finding usuario: " + username, e);
+            throw new PersistenceException("Error finding usuario", e);
         }
         return null;
     }
@@ -112,8 +121,10 @@ public class UsuarioDAOJDBC implements UsuarioDAO {
                 resultados.add(usuario);
             }
         } catch (SQLException e) {
-            throw new Exception("Error al buscar todos los usuarios", e);
+            logger.log(Level.SEVERE, "Error finding all usuarios", e);
+            throw new PersistenceException("Error finding all usuarios", e);
         }
         return resultados;
     }
+
 }

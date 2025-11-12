@@ -3,6 +3,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.unrn.seminario.exception.DomainValidationException;
+
 public class PedidoDonacion {
     private Integer id;
     private String descripcion;
@@ -80,7 +82,20 @@ public class PedidoDonacion {
 		}
 		return total;
 	}
-		
+	
+	// validation
+	public void validate() {
+		if (this.descripcion == null || this.descripcion.trim().isEmpty()) throw new DomainValidationException("PedidoDonacion.descripcion is required");
+		if (this.donaciones != null) {
+			for (Donacion d : this.donaciones) {
+				if (d == null) throw new DomainValidationException("PedidoDonacion contains null Donacion");
+				d.validate();
+			}
+		}
+		int computed = calcularPuntajeTotal();
+		if (computed < 0) throw new DomainValidationException("PedidoDonacion.puntaje total invalid");
+	}
+	
     @Override
     public int hashCode() {
         final int prime = 31;

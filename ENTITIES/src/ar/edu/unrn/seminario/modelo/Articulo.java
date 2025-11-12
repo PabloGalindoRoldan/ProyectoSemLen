@@ -1,16 +1,22 @@
 package ar.edu.unrn.seminario.modelo;
 
+import ar.edu.unrn.seminario.exception.DomainValidationException;
+
 public class Articulo {
     private String nombre;
     private int cantidad;
     private TipoDonacion tipo;
 
     public Articulo(String nombre, int cantidad) {
+        if (nombre == null || nombre.trim().isEmpty()) throw new DomainValidationException("Articulo.nombre is required");
+        if (cantidad < 0) throw new DomainValidationException("Articulo.cantidad cannot be negative");
         this.nombre = nombre;
         this.cantidad = cantidad;
     }
 
     public Articulo(String nombre, int cantidad, TipoDonacion tipo) {
+        if (nombre == null || nombre.trim().isEmpty()) throw new DomainValidationException("Articulo.nombre is required");
+        if (cantidad < 0) throw new DomainValidationException("Articulo.cantidad cannot be negative");
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.tipo = tipo;
@@ -21,6 +27,7 @@ public class Articulo {
     }
 
     public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) throw new DomainValidationException("Articulo.nombre is required");
         this.nombre = nombre;
     }
 
@@ -29,6 +36,7 @@ public class Articulo {
     }
 
     public void setCantidad(int cantidad) {
+        if (cantidad < 0) throw new DomainValidationException("Articulo.cantidad cannot be negative");
         this.cantidad = cantidad;
     }
 
