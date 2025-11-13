@@ -3,8 +3,10 @@ package ar.edu.unrn.seminario.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -20,6 +22,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JComboBox;
 
+import com.toedter.calendar.JDateChooser;
+
 import ar.edu.unrn.seminario.api.IApi;
 import ar.edu.unrn.seminario.dto.ArticuloDTO;
 import ar.edu.unrn.seminario.dto.VisitaDTO;
@@ -28,7 +32,8 @@ public class AltaVisita extends JFrame {
 
     private JPanel contentPane;
     private JTextField visitanteField;
-    private JTextField fechaField; 
+    private JDateChooser dateChooser; 
+    private JTextField timeField;
     private JTextField motivoField;
     private JTextField cantidadField;
     private JTextField articuloNombreField;
@@ -41,9 +46,8 @@ public class AltaVisita extends JFrame {
 
     private IApi api;
     private Integer ordenId; 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    private JComboBox<String> tipoArticuloCombo; // new
+    private JComboBox<String> tipoArticuloCombo; 
 
     private static final String[] TIPOS = new String[] { "ROPA", "CALZADO", "ALIMENTOS", "JUGUETES", "MUEBLES", "ELECTRONICA", "HIGIENE", "MEDICAMENTOS", "OTRO" };
 
@@ -67,13 +71,18 @@ public class AltaVisita extends JFrame {
         visitanteField.setBounds(120, 16, 200, 22);
         contentPane.add(visitanteField);
 
-        JLabel fechaLabel = new JLabel("Fecha (YYYY-MM-DDTHH:MM:SS):");
+        JLabel fechaLabel = new JLabel("Fecha:");
         fechaLabel.setBounds(20, 55, 180, 16);
         contentPane.add(fechaLabel);
 
-        fechaField = new JTextField();
-        fechaField.setBounds(200, 52, 200, 22);
-        contentPane.add(fechaField);
+        dateChooser = new JDateChooser();
+        dateChooser.setBounds(120, 52, 200, 22);
+        contentPane.add(dateChooser);
+
+        timeField = new JTextField();
+        timeField.setBounds(330, 52, 120, 22);
+        timeField.setToolTipText("HH:mm:ss (opcional)");
+        contentPane.add(timeField);
 
         JLabel motivoLabel = new JLabel("Motivo:");
         motivoLabel.setBounds(20, 90, 80, 16);
@@ -123,7 +132,7 @@ public class AltaVisita extends JFrame {
                 String cantText = articuloCantidadField.getText().trim();
                 String tipo = (String) tipoArticuloCombo.getSelectedItem();
                 if (nombre.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Nombre de articulo requerido", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Hace falta el nombre del artículo", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 int c = 0;
@@ -162,13 +171,23 @@ public class AltaVisita extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     String visitante = visitanteField.getText().trim();
-                    String fechaText = fechaField.getText().trim();
+
                     LocalDateTime fecha = null;
-                    if (!fechaText.isEmpty()) {
-                        try { fecha = LocalDateTime.parse(fechaText, FORMATTER); } catch (Exception ex) { JOptionPane.showMessageDialog(null, "Fecha con formato invalido. Use ISO yyyy-MM-ddTHH:mm:ss", "Error", JOptionPane.ERROR_MESSAGE); return; }
+                    Date selected = dateChooser.getDate();
+                    String timeText = timeField.getText().trim();
+                    if (selected != null) {
+                        LocalDateTime datePart = LocalDateTime.ofInstant(selected.toInstant(), ZoneId.systemDefault()).withHour(0).withMinute(0).withSecond(0).withNano(0);
+                        LocalTime time = null;
+                        if (!timeText.isEmpty()) {
+                            try { time = LocalTime.parse(timeText); } catch (Exception ex) { JOptionPane.showMessageDialog(null, "Hora con formato invalido. Use HH:mm:ss", "Error", JOptionPane.ERROR_MESSAGE); return; }
+                        } else {
+                            time = LocalTime.now();
+                        }
+                        fecha = LocalDateTime.of(datePart.toLocalDate(), time);
                     } else {
                         fecha = LocalDateTime.now();
                     }
+
                     String motivo = motivoField.getText().trim();
                     int cantidad = 0;
                     String cantText = cantidadField.getText().trim();
@@ -190,7 +209,7 @@ public class AltaVisita extends JFrame {
                     JOptionPane.showMessageDialog(null, "Visita creada", "Info", JOptionPane.INFORMATION_MESSAGE);
                     setVisible(false); dispose();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Ocurrió un error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

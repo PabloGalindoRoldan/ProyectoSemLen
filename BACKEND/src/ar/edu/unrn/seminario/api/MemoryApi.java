@@ -1,4 +1,4 @@
-package ar.edu.unrn.seminario.api;
+/*package ar.edu.unrn.seminario.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +32,9 @@ public class MemoryApi implements IApi {
 		this.roles.add(new Rol(3, "INVITADO"));
 		this.roles.add(new Rol(4, "DONANTE"));
 		this.roles.add(new Rol(5, "VOLUNTARIO"));
-		inicializarUsuarios();
+		//inicializarUsuarios();
 	}
-
+/*
 	private void inicializarUsuarios() {
 		registrarUsuario("admin", "1234", "admin@unrn.edu.ar", "Admin", 1);
 		registrarUsuario("ldifabio", "4", "ldifabio@unrn.edu.ar", "Lucas", 2);
@@ -286,4 +286,4 @@ public class MemoryApi implements IApi {
 		if (v != null) v.setConfirmada(false);
 	}
 
-}
+}*/

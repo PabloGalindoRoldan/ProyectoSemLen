@@ -37,18 +37,20 @@ public class ListadoPedidos extends JFrame {
         contentPane.setLayout(null);
         setContentPane(contentPane);
 
+        //defino las columnas
         String[] columns = new String[] { "ID", "FechaCreacion", "Descripcion", "Donante", "PuntajeTotal", "Observaciones", "NecesitaVehiculo", "Activo" };
         model = new DefaultTableModel(columns, 0) {
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int row, int column) { //sobreescribo el metodo para que las filas no sean editables. 
                 return false;
             }
         };
-
+        
+        //inicializo la tabla no editable
         table = new JTable(model);
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBounds(10, 10, 920, 300);
-        contentPane.add(scroll);
+        contentPane.add(scroll); // barra de navegacion
 
         JButton refreshButton = new JButton("Refrescar");
         refreshButton.setBounds(10, 320, 120, 25);
@@ -57,7 +59,7 @@ public class ListadoPedidos extends JFrame {
                 loadData();
             }
         });
-        contentPane.add(refreshButton);
+        contentPane.add(refreshButton); // agrego boton de refresh (corre nuevamente loadData())
 
         JButton eliminarButton = new JButton("Eliminar Seleccion");
         eliminarButton.setBounds(140, 320, 160, 25);
@@ -149,12 +151,13 @@ public class ListadoPedidos extends JFrame {
     private void loadData() {
         model.setRowCount(0);
         try {
-            List<PedidoDonacionDTO> pedidos = api.obtenerPedidosDonacion();
+            List<PedidoDonacionDTO> pedidos = api.obtenerPedidosDonacion(); //obtiene los pedidos de donacion
             for (PedidoDonacionDTO p : pedidos) {
                 String fecha = "";
                 if (p.getFechaCreacion() != null) {
-                    fecha = p.getFechaCreacion().format(FORMATTER);
+                    fecha = p.getFechaCreacion().format(FORMATTER); //obtiene la fecha de creacion
                 }
+                //se crea una fila por pedido de donacion
                 Object[] row = new Object[] { p.getId(), fecha, p.getDescripcion(), p.getDonanteUsername(), p.getPuntajeTotal(), p.getObservaciones(), p.isNecesitaVehiculo(), p.isActivo() };
                 model.addRow(row);
             }
