@@ -12,13 +12,13 @@ public class Rol {
 	}
 
 	public Rol(Integer codigo, String nombre) {
+		super();
+		this.codigo = codigo;
+		this.nombre = nombre;
 		if (codigo == null || codigo <= 0)
 			throw new DomainValidationException("Rol.codigo must be positive");
 		if (nombre == null || nombre.trim().isEmpty())
 			throw new DomainValidationException("Rol.nombre is required");
-		super();
-		this.codigo = codigo;
-		this.nombre = nombre;
 	}
 
 	public Integer getCodigo() {

@@ -78,15 +78,13 @@ CREATE TABLE IF NOT EXISTS articulos (
 -- sample data
 INSERT IGNORE INTO roles (codigo, nombre, activo) VALUES
 (1, 'ADMIN', 1),
-(2, 'ESTUDIANTE', 1),
-(3, 'INVITADO', 1),
 (4, 'DONANTE', 1),
 (5, 'VOLUNTARIO', 1);
 
 INSERT IGNORE INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, activo) VALUES
 ('admin', '1234', 'Admin', 'admin@unrn.edu.ar', 1, 1),
-('ldifabio', '4', 'Lucas', 'ldifabio@unrn.edu.ar', 2, 1),
-('bjgorosito', '1234', 'Bruno', 'bjgorosito@unrn.edu.ar', 3, 1),
+('ldifabio', '4', 'Lucas', 'ldifabio@unrn.edu.ar', 4, 1),
+('bjgorosito', '1234', 'Bruno', 'bjgorosito@unrn.edu.ar', 5, 1),
 ('pgalindo', '5678', 'Pablo', 'pablogalindo90@gmail.com', 4, 1),
 ('mvoluntario', 'v123', 'Voluntario Uno', 'vol1@example.com', 5, 1),
 ('donante1', 'd123', 'Donante Uno', 'don1@example.com', 4, 1),

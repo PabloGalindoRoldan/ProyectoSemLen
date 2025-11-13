@@ -83,12 +83,12 @@ public class Usuario {
 			this.activo = false;
 	}
 
-	// entity validation method
+	// metodo de validacion de entidades
 	public void validate() {
 		if (this.usuario == null || this.usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario is required");
 		if (this.contrasena == null || this.contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena is required");
 		if (this.nombre == null || this.nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre is required");
-		if (this.email != null && !this.email.trim().isEmpty() && !this.email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
+		//if (this.email != null && !this.email.trim().isEmpty() && !this.email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
 	}
 
 	@Override
