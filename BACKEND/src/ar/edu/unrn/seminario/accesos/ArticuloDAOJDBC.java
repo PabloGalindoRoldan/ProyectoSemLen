@@ -27,12 +27,12 @@ public class ArticuloDAOJDBC implements ArticuloDAO {
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    // no id setter on Articulo model
+                	//se puede obtener el id generado si es necesario
                 }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error inserting articulo for visitaId=" + visitaId, e);
-            throw new PersistenceException("Error inserting articulo for visitaId=" + visitaId, e);
+            logger.log(Level.SEVERE, "Error insertando articulo en visitaId=" + visitaId, e);
+            throw new PersistenceException("Error insertando articulo en visitaId=" + visitaId, e);
         }
     }
 
@@ -59,8 +59,8 @@ public class ArticuloDAOJDBC implements ArticuloDAO {
                 }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error listing articulos for visitaId=" + visitaId, e);
-            throw new PersistenceException("Error listing articulos for visitaId=" + visitaId, e);
+            logger.log(Level.SEVERE, "Error listando los articulos de visitaId=" + visitaId, e);
+            throw new PersistenceException("Error listando los articulos de visitaId=" + visitaId, e);
         }
         return result;
     }
@@ -71,8 +71,8 @@ public class ArticuloDAOJDBC implements ArticuloDAO {
             ps.setInt(1, ordenId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error deleting articulos for ordenId=" + ordenId, e);
-            throw new PersistenceException("Error deleting articulos for ordenId=" + ordenId, e);
+            logger.log(Level.SEVERE, "Error borrando articulos para ordenId=" + ordenId, e);
+            throw new PersistenceException("Error borrando articulos para ordenId=" + ordenId, e);
         }
     }
 }

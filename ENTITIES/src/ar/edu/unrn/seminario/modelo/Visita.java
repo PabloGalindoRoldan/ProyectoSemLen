@@ -103,15 +103,15 @@ public class Visita {
 
     // validation
     public void validate() {
-        if (this.visitante == null || this.visitante.trim().isEmpty()) throw new DomainValidationException("Visita.visitante is required");
-        if (this.fechaHora == null) throw new DomainValidationException("Visita.fechaHora is required");
-        if (this.motivo == null || this.motivo.trim().isEmpty()) throw new DomainValidationException("Visita.motivo is required");
-        if (this.cantidadBienesRecogidos < 0) throw new DomainValidationException("Visita.cantidadBienesRecogidos cannot be negative");
+        if (this.visitante == null || this.visitante.trim().isEmpty()) throw new DomainValidationException("Visita.visitante es requerido");
+        if (this.fechaHora == null) throw new DomainValidationException("Visita.fechaHora es requerido");
+        if (this.motivo == null || this.motivo.trim().isEmpty()) throw new DomainValidationException("Visita.motivo es requerido");
+        if (this.cantidadBienesRecogidos < 0) throw new DomainValidationException("Visita.cantidadBienesRecogidos no puede ser negativo");
         if (this.articulosRecogidos != null) {
             for (Articulo a : this.articulosRecogidos) {
-                if (a == null) throw new DomainValidationException("Visita contains null Articulo");
-                if (a.getNombre() == null || a.getNombre().trim().isEmpty()) throw new DomainValidationException("Articulo.nombre is required");
-                if (a.getCantidad() < 0) throw new DomainValidationException("Articulo.cantidad cannot be negative");
+                if (a == null) throw new DomainValidationException("Visita contiene un Articulo nulo");
+                if (a.getNombre() == null || a.getNombre().trim().isEmpty()) throw new DomainValidationException("Articulo.nombre es requerido");
+                if (a.getCantidad() < 0) throw new DomainValidationException("Articulo.cantidad no puede ser negativo");
             }
         }
     }

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface PedidoDAO {
-    int create(PedidoDonacion pedido) throws SQLException; // returns generated id (or provided id)
+    int create(PedidoDonacion pedido) throws SQLException; 
     List<PedidoDonacion> findAll() throws SQLException;
     PedidoDonacion findById(int id) throws SQLException;
     void delete(int id) throws SQLException;

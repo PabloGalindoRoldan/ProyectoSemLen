@@ -104,10 +104,10 @@ public class OrdenRetiro {
 
     // validation
     public void validate() {
-        if (this.pedido == null) throw new DomainValidationException("OrdenRetiro.pedido is required");
+        if (this.pedido == null) throw new DomainValidationException("OrdenRetiro.pedido es requerido");
         if (this.visitas != null) {
             for (Visita v : this.visitas) {
-                if (v == null) throw new DomainValidationException("OrdenRetiro contains null Visita");
+                if (v == null) throw new DomainValidationException("OrdenRetiro contiene una Visita nula");
             }
         }
     }

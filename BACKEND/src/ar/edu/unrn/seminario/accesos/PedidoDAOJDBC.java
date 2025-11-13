@@ -38,34 +38,44 @@ public class PedidoDAOJDBC implements PedidoDAO {
                 ps.setBoolean(7, true);
                 ps.setInt(8, pedido.calcularPuntajeTotal());
                 ps.executeUpdate();
+
                 int generatedId = 0;
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) generatedId = rs.getInt(1);
                 }
+
                 int pedidoId = (generatedId != 0) ? generatedId : (pedido.getId() == null ? 0 : pedido.getId());
-                // insertar donaciones using the same connection for transactional safety
+
+                // Inserto las donaciones con la misma conexión para mantener la transacción coherente
                 if (pedido.getDonaciones() != null && !pedido.getDonaciones().isEmpty()) {
                     for (Donacion d : pedido.getDonaciones()) {
                         donacionDAO.insertar(conn, d, pedidoId);
                     }
                 }
+
                 conn.commit();
                 return pedidoId;
+
             } catch (SQLException ex) {
-                try { conn.rollback(); } catch (SQLException r) { logger.log(Level.SEVERE, "Rollback failed", r); }
-                logger.log(Level.SEVERE, "Error creating pedido", ex);
-                throw new PersistenceException("Error creating pedido", ex);
+                try { conn.rollback(); } catch (SQLException r) { logger.log(Level.SEVERE, "Error al hacer rollback", r); }
+                // Error al crear el pedido
+                logger.log(Level.SEVERE, "Error al crear el pedido", ex);
+                throw new PersistenceException("Error al crear el pedido", ex);
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error in create(PedidoDonacion)", e);
-            throw new PersistenceException("Error creating pedido (connection)", e);
+            // Error al obtener la conexión o ejecutar la creación
+            logger.log(Level.SEVERE, "Error en create(PedidoDonacion)", e);
+            throw new PersistenceException("Error al crear el pedido (problema de conexión)", e);
         }
     }
 
     @Override
     public List<PedidoDonacion> findAll() throws SQLException {
         List<PedidoDonacion> result = new ArrayList<>();
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_PEDIDOS); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_PEDIDOS);
+             ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 Integer id = rs.getInt("id");
                 String descripcion = rs.getString("descripcion");
@@ -74,19 +84,26 @@ public class PedidoDAOJDBC implements PedidoDAO {
                 String donante = rs.getString("donante_username");
                 Usuario u = new Usuario(donante, null, null, null, null);
                 List<Donacion> donaciones = donacionDAO.listarPorPedido(id);
+
+                // Creo el pedido con sus datos y lo agrego a la lista
                 PedidoDonacion p = new PedidoDonacion(id, descripcion, observaciones, necesitaVehiculo, u, donaciones);
                 result.add(p);
             }
+
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error finding all pedidos", e);
-            throw new PersistenceException("Error finding all pedidos", e);
+            // Algo falló al buscar los pedidos
+            logger.log(Level.SEVERE, "Error al obtener la lista de pedidos", e);
+            throw new PersistenceException("Error al obtener todos los pedidos", e);
         }
+
         return result;
     }
 
     @Override
     public PedidoDonacion findById(int id) throws SQLException {
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_PEDIDO_BY_ID)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_PEDIDO_BY_ID)) {
+
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -96,13 +113,18 @@ public class PedidoDAOJDBC implements PedidoDAO {
                     String donante = rs.getString("donante_username");
                     Usuario u = new Usuario(donante, null, null, null, null);
                     List<Donacion> donaciones = donacionDAO.listarPorPedido(id);
+
+                    // Devuelvo el pedido encontrado
                     return new PedidoDonacion(id, descripcion, observaciones, necesitaVehiculo, u, donaciones);
                 }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error finding pedido by id=" + id, e);
-            throw new PersistenceException("Error finding pedido by id=" + id, e);
+            // Error al buscar un pedido por ID
+            logger.log(Level.SEVERE, "Error al buscar el pedido con id=" + id, e);
+            throw new PersistenceException("Error al buscar el pedido con id=" + id, e);
         }
+
+        // Si no lo encontró, devuelve null (ojo con esto en la capa superior)
         return null;
     }
 
@@ -111,21 +133,25 @@ public class PedidoDAOJDBC implements PedidoDAO {
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                // delete donaciones using same connection to keep transactional integrity
+                // Primero borro las donaciones asociadas para evitar errores de FK
                 donacionDAO.eliminarPorPedido(conn, id);
+
+                // Luego borro el pedido en sí
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_PEDIDO)) {
                     ps.setInt(1, id);
                     ps.executeUpdate();
                 }
+
                 conn.commit();
+
             } catch (SQLException ex) {
-                try { conn.rollback(); } catch (SQLException r) { logger.log(Level.SEVERE, "Rollback failed", r); }
-                logger.log(Level.SEVERE, "Error deleting pedido id=" + id, ex);
-                throw new PersistenceException("Error deleting pedido id=" + id, ex);
+                try { conn.rollback(); } catch (SQLException r) { logger.log(Level.SEVERE, "Error al hacer rollback", r); }
+                logger.log(Level.SEVERE, "Error al eliminar el pedido con id=" + id, ex);
+                throw new PersistenceException("Error al eliminar el pedido con id=" + id, ex);
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error in delete(pedido)", e);
-            throw new PersistenceException("Error deleting pedido (connection)", e);
+            logger.log(Level.SEVERE, "Error en delete(pedido)", e);
+            throw new PersistenceException("Error al eliminar el pedido (problema de conexión)", e);
         }
     }
 }

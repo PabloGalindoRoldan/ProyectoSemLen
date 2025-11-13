@@ -24,7 +24,7 @@ public class Usuario {
 	}
 
 	public void setUsuario(String usuario) {
-		if (usuario == null || usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario is required");
+		if (usuario == null || usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario es requerido");
 		this.usuario = usuario;
 	}
 
@@ -33,7 +33,7 @@ public class Usuario {
 	}
 
 	public void setContrasena(String contrasena) {
-		if (contrasena == null || contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena is required");
+		if (contrasena == null || contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena es requerido");
 		this.contrasena = contrasena;
 	}
 
@@ -42,7 +42,7 @@ public class Usuario {
 	}
 
 	public void setNombre(String nombre) {
-		if (nombre == null || nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre is required");
+		if (nombre == null || nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre es requerido");
 		this.nombre = nombre;
 	}
 
@@ -52,7 +52,7 @@ public class Usuario {
 
 	public void setEmail(String email) {
 		if (email != null && !email.trim().isEmpty()) {
-			if (!email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
+			if (!email.contains("@")) throw new DomainValidationException("Usuario.email invalido");
 		}
 		this.email = email;
 	}
@@ -85,9 +85,9 @@ public class Usuario {
 
 	// metodo de validacion de entidades
 	public void validate() {
-		if (this.usuario == null || this.usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario is required");
-		if (this.contrasena == null || this.contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena is required");
-		if (this.nombre == null || this.nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre is required");
+		if (this.usuario == null || this.usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario es requerido");
+		if (this.contrasena == null || this.contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena es requerido");
+		if (this.nombre == null || this.nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre es requerido");
 		//if (this.email != null && !this.email.trim().isEmpty() && !this.email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
 	}
 

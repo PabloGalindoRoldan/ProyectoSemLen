@@ -17,7 +17,6 @@ public interface DonacionDAO {
 
     void actualizar(Donacion donacion) throws SQLException;
 
-    // Connection-aware variants to allow transactional callers to reuse the same Connection
     void insertar(Connection conn, Donacion donacion, int pedidoId) throws SQLException;
 
     void eliminarPorPedido(Connection conn, int pedidoId) throws SQLException;

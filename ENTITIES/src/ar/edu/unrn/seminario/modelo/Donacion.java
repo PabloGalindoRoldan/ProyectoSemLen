@@ -14,6 +14,8 @@ public class Donacion {
         this.puntaje = puntaje;
     }
 
+    // --- Getters y Setters ---
+
     public TipoDonacion getTipoDonacion() {
         return tipoDonacion;
     }
@@ -46,13 +48,17 @@ public class Donacion {
         this.id = id;
     }
 
-    // validation
+
     public void validate() {
-        if (this.tipoDonacion == null) throw new DomainValidationException("Donacion.tipoDonacion is required");
-        if (this.categoria == null || this.categoria.trim().isEmpty()) throw new DomainValidationException("Donacion.categoria is required");
-        if (this.puntaje < 0) throw new DomainValidationException("Donacion.puntaje cannot be negative");
+        if (this.tipoDonacion == null)
+            throw new DomainValidationException("El tipo de donación es obligatorio");
+        if (this.categoria == null || this.categoria.trim().isEmpty())
+            throw new DomainValidationException("La categoría de la donación es obligatoria");
+        if (this.puntaje < 0)
+            throw new DomainValidationException("El puntaje de la donación no puede ser negativo");
     }
 
+    // hashCode y equals para comparar objetos Donacion
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -72,15 +78,19 @@ public class Donacion {
         if (getClass() != obj.getClass())
             return false;
         Donacion otro = (Donacion) obj;
+
         if (categoria == null) {
             if (otro.categoria != null)
                 return false;
         } else if (!categoria.equals(otro.categoria))
             return false;
+
         if (tipoDonacion != otro.tipoDonacion)
             return false;
+
         if (puntaje != otro.puntaje)
             return false;
+
         return true;
     }
 }

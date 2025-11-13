@@ -85,15 +85,15 @@ public class PedidoDonacion {
 	
 	// validation
 	public void validate() {
-		if (this.descripcion == null || this.descripcion.trim().isEmpty()) throw new DomainValidationException("PedidoDonacion.descripcion is required");
+		if (this.descripcion == null || this.descripcion.trim().isEmpty()) throw new DomainValidationException("PedidoDonacion.descripcion es requerido");
 		if (this.donaciones != null) {
 			for (Donacion d : this.donaciones) {
-				if (d == null) throw new DomainValidationException("PedidoDonacion contains null Donacion");
+				if (d == null) throw new DomainValidationException("PedidoDonacion contiene una Donacion nula");
 				d.validate();
 			}
 		}
 		int computed = calcularPuntajeTotal();
-		if (computed < 0) throw new DomainValidationException("PedidoDonacion.puntaje total invalid");
+		if (computed < 0) throw new DomainValidationException("PedidoDonacion.puntaje total no puede ser negativo");
 	}
 	
     @Override

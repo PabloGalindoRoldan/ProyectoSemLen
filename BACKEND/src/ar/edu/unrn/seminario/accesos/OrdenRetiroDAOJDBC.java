@@ -1,6 +1,7 @@
 package ar.edu.unrn.seminario.accesos;
 
 import ar.edu.unrn.seminario.modelo.OrdenRetiro;
+import ar.edu.unrn.seminario.modelo.EstadoOrden;
 import ar.edu.unrn.seminario.modelo.PedidoDonacion;
 import ar.edu.unrn.seminario.modelo.Visita;
 import ar.edu.unrn.seminario.modelo.Usuario;
@@ -55,11 +56,20 @@ public class OrdenRetiroDAOJDBC implements OrdenRetiroDAO {
                     Integer id = rs.getInt("id");
                     Integer pedidoId = rs.getInt("pedido_id");
                     String voluntario = rs.getString("voluntario_username");
-                    // create placeholders
+                    String estadoStr = rs.getString("estado");
+                    // crear placeholders
                     PedidoDonacion pedido = new PedidoDonacion(pedidoId, null, null, false, new Usuario(null, null, null, null, null));
                     Usuario u = new Usuario(voluntario, null, null, null, null);
                     OrdenRetiro ord = new OrdenRetiro(id, pedido, u);
-                    // load visitas via visitaDAO
+                    //actualizar estado
+                    if (estadoStr != null) {
+                        try {
+                        	ord.setEstado(EstadoOrden.valueOf(estadoStr));
+                        } catch (IllegalArgumentException e) {
+                            logger.warning("Estado inválido en BD para orden id=" + id + ": " + estadoStr);
+                        }
+                    }                              
+                    // cargar visitas via visitaDAO
                     List<Visita> visitas = visitaDAO.listarPorOrden(id);
                     ord.setVisitas(visitas);
                     result.add(ord);

@@ -47,7 +47,7 @@ public class AltaVisita extends JFrame {
     private IApi api;
     private Integer ordenId; 
 
-    private JComboBox<String> tipoArticuloCombo; // new
+    private JComboBox<String> tipoArticuloCombo; 
 
     private static final String[] TIPOS = new String[] { "ROPA", "CALZADO", "ALIMENTOS", "JUGUETES", "MUEBLES", "ELECTRONICA", "HIGIENE", "MEDICAMENTOS", "OTRO" };
 
@@ -81,7 +81,7 @@ public class AltaVisita extends JFrame {
 
         timeField = new JTextField();
         timeField.setBounds(330, 52, 120, 22);
-        timeField.setToolTipText("HH:mm:ss (optional)");
+        timeField.setToolTipText("HH:mm:ss (opcional)");
         contentPane.add(timeField);
 
         JLabel motivoLabel = new JLabel("Motivo:");
@@ -132,7 +132,7 @@ public class AltaVisita extends JFrame {
                 String cantText = articuloCantidadField.getText().trim();
                 String tipo = (String) tipoArticuloCombo.getSelectedItem();
                 if (nombre.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Nombre de articulo requerido", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Hace falta el nombre del artículo", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 int c = 0;
@@ -209,7 +209,7 @@ public class AltaVisita extends JFrame {
                     JOptionPane.showMessageDialog(null, "Visita creada", "Info", JOptionPane.INFORMATION_MESSAGE);
                     setVisible(false); dispose();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Ocurrió un error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

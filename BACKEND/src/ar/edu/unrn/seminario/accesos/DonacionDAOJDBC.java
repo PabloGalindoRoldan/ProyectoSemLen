@@ -31,8 +31,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
         try (Connection conn = DBConnection.getConnection()) {
             insertar(conn, donacion, pedidoId);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error inserting donacion for pedidoId=" + pedidoId, e);
-            throw new PersistenceException("Error inserting donacion for pedidoId=" + pedidoId, e);
+            logger.log(Level.SEVERE, "Error insertando donaciones en pedidoId=" + pedidoId, e);
+            throw new PersistenceException("Error insertando donaciones en pedidoId=" + pedidoId, e);
         }
     }
 
@@ -51,8 +51,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
                 }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error inserting donacion (connection-aware) for pedidoId=" + pedidoId, e);
-            throw new PersistenceException("Error inserting donacion (connection-aware) for pedidoId=" + pedidoId, e);
+            logger.log(Level.SEVERE, "Error insertando donaciones (connection-aware) para pedidoId=" + pedidoId, e);
+            throw new PersistenceException("Error insertando donaciones (connection-aware) para pedidoId=" + pedidoId, e);
         }
     }
 
@@ -72,8 +72,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
                 }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error listing donaciones for pedidoId=" + pedidoId, e);
-            throw new PersistenceException("Error listing donaciones for pedidoId=" + pedidoId, e);
+            logger.log(Level.SEVERE, "Error listando donaciones para pedidoId=" + pedidoId, e);
+            throw new PersistenceException("Error listando donaciones para pedidoId=" + pedidoId, e);
         }
         return donaciones;
     }
@@ -83,8 +83,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
         try (Connection conn = DBConnection.getConnection()) {
             eliminarPorPedido(conn, pedidoId);
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error deleting donaciones for pedidoId=" + pedidoId, e);
-            throw new PersistenceException("Error deleting donaciones for pedidoId=" + pedidoId, e);
+            logger.log(Level.SEVERE, "Error borrando donaciones para pedidoId=" + pedidoId, e);
+            throw new PersistenceException("Error borrando donaciones para pedidoId=" + pedidoId, e);
         }
     }
 
@@ -94,8 +94,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
             ps.setInt(1, pedidoId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error deleting donaciones (connection-aware) for pedidoId=" + pedidoId, e);
-            throw new PersistenceException("Error deleting donaciones (connection-aware) for pedidoId=" + pedidoId, e);
+            logger.log(Level.SEVERE, "Error borrando donaciones (connection-aware) para pedidoId=" + pedidoId, e);
+            throw new PersistenceException("Error borrando donaciones (connection-aware) para pedidoId=" + pedidoId, e);
         }
     }
 
@@ -114,8 +114,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
             ps.setInt(4, donacion.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error updating donacion id=" + donacion.getId(), e);
-            throw new PersistenceException("Error updating donacion id=" + donacion.getId(), e);
+            logger.log(Level.SEVERE, "Error actializando donacion id=" + donacion.getId(), e);
+            throw new PersistenceException("Error actualizando donacion id=" + donacion.getId(), e);
         }
     }
     
@@ -136,8 +136,8 @@ public class DonacionDAOJDBC implements DonacionDAO {
                 }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Error finding donacion by id=" + id, e);
-            throw new PersistenceException("Error finding donacion by id=" + id, e);
+            logger.log(Level.SEVERE, "Error encontrando donacion por id=" + id, e);
+            throw new PersistenceException("Error encontrando donacion por id=" + id, e);
         }
     }
     
@@ -149,7 +149,7 @@ public class DonacionDAOJDBC implements DonacionDAO {
             try {
                 tipo = TipoDonacion.valueOf(tipoStr);
             } catch (IllegalArgumentException ex) {
-                logger.log(Level.WARNING, "Unknown tipoDonacion value in DB: " + tipoStr);
+                logger.log(Level.WARNING, "Valor tipoDonacion desconocido en la DB: " + tipoStr);
             }
         }
         String categoria = rs.getString("categoria");

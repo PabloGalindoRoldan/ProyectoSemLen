@@ -1,43 +1,20 @@
 package ar.edu.unrn.seminario.api;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.edu.unrn.seminario.accesos.DBConnection;
-import ar.edu.unrn.seminario.accesos.DonacionDAO;
-import ar.edu.unrn.seminario.accesos.DonacionDAOJDBC;
-import ar.edu.unrn.seminario.accesos.OrdenRetiroDAO;
-import ar.edu.unrn.seminario.accesos.OrdenRetiroDAOJDBC;
-import ar.edu.unrn.seminario.accesos.PedidoDAO;
-import ar.edu.unrn.seminario.accesos.PedidoDAOJDBC;
-import ar.edu.unrn.seminario.accesos.RolDAOJDBC;
-import ar.edu.unrn.seminario.accesos.UsuarioDAO;
-import ar.edu.unrn.seminario.accesos.UsuarioDAOJDBC;
-import ar.edu.unrn.seminario.accesos.VisitaDAO;
-import ar.edu.unrn.seminario.accesos.VisitaDAOJDBC;
-import ar.edu.unrn.seminario.dto.ArticuloDTO;
-import ar.edu.unrn.seminario.dto.DonacionDTO;
-import ar.edu.unrn.seminario.dto.OrdenRetiroDTO;
-import ar.edu.unrn.seminario.dto.PedidoDonacionDTO;
-import ar.edu.unrn.seminario.dto.RolDTO;
-import ar.edu.unrn.seminario.dto.UsuarioDTO;
-import ar.edu.unrn.seminario.dto.VisitaDTO;
+import ar.edu.unrn.seminario.accesos.*;
+import ar.edu.unrn.seminario.dto.*;
 import ar.edu.unrn.seminario.exception.DomainValidationException;
-import ar.edu.unrn.seminario.modelo.Donacion;
-import ar.edu.unrn.seminario.modelo.OrdenRetiro;
-import ar.edu.unrn.seminario.modelo.PedidoDonacion;
-import ar.edu.unrn.seminario.modelo.Rol;
-import ar.edu.unrn.seminario.modelo.Usuario;
-import ar.edu.unrn.seminario.modelo.Visita;
+import ar.edu.unrn.seminario.modelo.*;
 
 public class PersistenceApi implements IApi {
 
     private UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
     private RolDAOJDBC rolDAO = new RolDAOJDBC();
 
-    // DAO layer for other entities
+    // Capas DAO para las demás entidades
     private PedidoDAO pedidoDAO = new PedidoDAOJDBC();
     private OrdenRetiroDAO ordenDAO = new OrdenRetiroDAOJDBC();
     private VisitaDAO visitaDAO = new VisitaDAOJDBC();
@@ -46,7 +23,8 @@ public class PersistenceApi implements IApi {
     public PersistenceApi() {
     }
 
-    // Usuarios
+    // ==================== USUARIOS ====================
+
     @Override
     public void registrarUsuario(String username, String password, String email, String nombre, Integer rol) {
         try {
@@ -56,14 +34,14 @@ public class PersistenceApi implements IApi {
                 r.setCodigo(rol);
             }
             Usuario usuario = new Usuario(username, password, nombre, email, r);
-            // validate entity before persisting
-            usuario.validate();
+            usuario.validate(); // validamos antes de guardar
             usuario.activar();
             usuarioDAO.create(usuario);
         } catch (DomainValidationException dve) {
-            throw dve; // let validation exceptions bubble up unchanged
+            throw dve; // las validaciones de dominio las dejamos pasar
         } catch (Exception e) {
-            throw new RuntimeException("Error registering usuario", e);
+            // Error genérico
+            throw new RuntimeException("Error al registrar el usuario", e);
         }
     }
 
@@ -75,7 +53,7 @@ public class PersistenceApi implements IApi {
             String rolNombre = u.getRol() != null ? u.getRol().getNombre() : null;
             return new UsuarioDTO(u.getUsuario(), u.getContrasena(), u.getNombre(), u.getEmail(), rolNombre, u.isActivo(), u.obtenerEstado());
         } catch (Exception e) {
-            throw new RuntimeException("Error obtaining usuario", e);
+            throw new RuntimeException("Error al obtener el usuario", e);
         }
     }
 
@@ -84,7 +62,7 @@ public class PersistenceApi implements IApi {
         try {
             usuarioDAO.remove(username);
         } catch (Exception e) {
-            throw new RuntimeException("Error deleting usuario", e);
+            throw new RuntimeException("Error al eliminar el usuario", e);
         }
     }
 
@@ -93,10 +71,11 @@ public class PersistenceApi implements IApi {
         try {
             List<RolDTO> res = new ArrayList<>();
             List<Rol> roles = rolDAO.findAll();
-            for (Rol r : roles) res.add(new RolDTO(r.getCodigo(), r.getNombre(), r.isActivo()));
+            for (Rol r : roles)
+                res.add(new RolDTO(r.getCodigo(), r.getNombre(), r.isActivo()));
             return res;
         } catch (Exception e) {
-            throw new RuntimeException("Error obtaining roles", e);
+            throw new RuntimeException("Error al obtener los roles", e);
         }
     }
 
@@ -105,10 +84,11 @@ public class PersistenceApi implements IApi {
         try {
             List<RolDTO> res = new ArrayList<>();
             List<Rol> roles = rolDAO.findAllActive();
-            for (Rol r : roles) res.add(new RolDTO(r.getCodigo(), r.getNombre(), r.isActivo()));
+            for (Rol r : roles)
+                res.add(new RolDTO(r.getCodigo(), r.getNombre(), r.isActivo()));
             return res;
         } catch (Exception e) {
-            throw new RuntimeException("Error obtaining active roles", e);
+            throw new RuntimeException("Error al obtener los roles activos", e);
         }
     }
 
@@ -119,8 +99,6 @@ public class PersistenceApi implements IApi {
             if (existing == null) {
                 Rol r = new Rol(codigo, descripcion);
                 if (!estado) r.desactivar();
-                // validate
-                r.getNombre(); // getters used implicitly; Rol constructor already validates
                 rolDAO.create(r);
             } else {
                 existing.setNombre(descripcion);
@@ -130,7 +108,7 @@ public class PersistenceApi implements IApi {
         } catch (DomainValidationException dve) {
             throw dve;
         } catch (Exception e) {
-            throw new RuntimeException("Error saving rol", e);
+            throw new RuntimeException("Error al guardar el rol", e);
         }
     }
 
@@ -141,7 +119,7 @@ public class PersistenceApi implements IApi {
             if (r == null) return null;
             return new RolDTO(r.getCodigo(), r.getNombre(), r.isActivo());
         } catch (Exception e) {
-            throw new RuntimeException("Error obtaining rol by codigo", e);
+            throw new RuntimeException("Error al obtener el rol por código", e);
         }
     }
 
@@ -154,7 +132,7 @@ public class PersistenceApi implements IApi {
                 rolDAO.update(r);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error activating rol", e);
+            throw new RuntimeException("Error al activar el rol", e);
         }
     }
 
@@ -167,7 +145,7 @@ public class PersistenceApi implements IApi {
                 rolDAO.update(r);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error deactivating rol", e);
+            throw new RuntimeException("Error al desactivar el rol", e);
         }
     }
 
@@ -182,7 +160,7 @@ public class PersistenceApi implements IApi {
             }
             return dtos;
         } catch (Exception e) {
-            throw new RuntimeException("Error obtaining usuarios", e);
+            throw new RuntimeException("Error al obtener los usuarios", e);
         }
     }
 
@@ -195,7 +173,7 @@ public class PersistenceApi implements IApi {
                 usuarioDAO.update(u);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error activating usuario", e);
+            throw new RuntimeException("Error al activar el usuario", e);
         }
     }
 
@@ -208,11 +186,12 @@ public class PersistenceApi implements IApi {
                 usuarioDAO.update(u);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error deactivating usuario", e);
+            throw new RuntimeException("Error al desactivar el usuario", e);
         }
     }
 
-    // Pedidos - delegate to PedidoDAO
+    // ==================== PEDIDOS ====================
+
     @Override
     public void crearPedidoDonacion(Integer id, String descripcion, String observaciones, boolean necesitaVehiculo,
             String donanteUsername, List<DonacionDTO> donaciones, boolean activo) {
@@ -220,16 +199,16 @@ public class PersistenceApi implements IApi {
             Usuario donante = donanteUsername == null ? null : new Usuario(donanteUsername, null, null, null, null);
             List<Donacion> donList = new ArrayList<>();
             if (donaciones != null) {
-                for (DonacionDTO d : donaciones) donList.add(new Donacion(ar.edu.unrn.seminario.modelo.TipoDonacion.valueOf(d.getTipoDonacion()), d.getCategoria(), d.getPuntaje()));
+                for (DonacionDTO d : donaciones)
+                    donList.add(new Donacion(ar.edu.unrn.seminario.modelo.TipoDonacion.valueOf(d.getTipoDonacion()), d.getCategoria(), d.getPuntaje()));
             }
             PedidoDonacion pedido = new PedidoDonacion(id == null ? 0 : id, descripcion, observaciones, necesitaVehiculo, donante, donList);
-            // validate entity
             pedido.validate();
             pedidoDAO.create(pedido);
         } catch (DomainValidationException dve) {
             throw dve;
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating pedido", e);
+            throw new RuntimeException("Error al crear el pedido de donación", e);
         }
     }
 
@@ -241,14 +220,15 @@ public class PersistenceApi implements IApi {
             for (PedidoDonacion p : pedidos) {
                 List<DonacionDTO> dd = new ArrayList<>();
                 if (p.getDonaciones() != null) {
-                    for (Donacion d : p.getDonaciones()) dd.add(new DonacionDTO(d.getTipoDonacion().name(), d.getCategoria(), d.getPuntaje()));
+                    for (Donacion d : p.getDonaciones())
+                        dd.add(new DonacionDTO(d.getTipoDonacion().name(), d.getCategoria(), d.getPuntaje()));
                 }
                 String donante = p.getDonante() == null ? null : p.getDonante().getUsuario();
                 result.add(new PedidoDonacionDTO(p.getId(), p.getDescripcion(), p.getObservaciones(), p.necesitaVehiculo(), donante, dd, true));
             }
             return result;
         } catch (SQLException e) {
-            throw new RuntimeException("Error obtaining pedidos", e);
+            throw new RuntimeException("Error al obtener los pedidos de donación", e);
         }
     }
 
@@ -258,11 +238,13 @@ public class PersistenceApi implements IApi {
             PedidoDonacion p = pedidoDAO.findById(id);
             if (p == null) return null;
             List<DonacionDTO> dd = new ArrayList<>();
-            if (p.getDonaciones() != null) for (Donacion d : p.getDonaciones()) dd.add(new DonacionDTO(d.getTipoDonacion().name(), d.getCategoria(), d.getPuntaje()));
+            if (p.getDonaciones() != null)
+                for (Donacion d : p.getDonaciones())
+                    dd.add(new DonacionDTO(d.getTipoDonacion().name(), d.getCategoria(), d.getPuntaje()));
             String donante = p.getDonante() == null ? null : p.getDonante().getUsuario();
             return new PedidoDonacionDTO(p.getId(), p.getDescripcion(), p.getObservaciones(), p.necesitaVehiculo(), donante, dd, true);
         } catch (SQLException e) {
-            throw new RuntimeException("Error obtaining pedido by id", e);
+            throw new RuntimeException("Error al obtener el pedido por ID", e);
         }
     }
 
@@ -271,30 +253,36 @@ public class PersistenceApi implements IApi {
         try {
             pedidoDAO.delete(id);
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting pedido", e);
+            throw new RuntimeException("Error al eliminar el pedido de donación", e);
         }
     }
 
-    // Ordenes de retiro - delegate to DAO
+    // ==================== ÓRDENES DE RETIRO ====================
+
     @Override
     public void crearOrdenRetiro(Integer id, Integer pedidoId, String voluntarioUsername, String estado) {
         try {
             PedidoDonacion pedido = pedidoDAO.findById(pedidoId);
-            if (pedido == null) throw new RuntimeException("Pedido not found: " + pedidoId);
+            if (pedido == null)
+                throw new RuntimeException("No se encontró el pedido con ID: " + pedidoId);
+
             Usuario voluntario = null;
             try {
                 voluntario = usuarioDAO.find(voluntarioUsername);
             } catch (Exception e) {
-                // ignore
+                // ignoramos si no se encuentra
             }
+
             OrdenRetiro orden = new OrdenRetiro(id == null ? 0 : id, pedido, voluntario);
-            // validate orden if method exists
-            try { orden.validate(); } catch (NoSuchMethodError ignore) {}
+            try {
+                orden.validate();
+            } catch (NoSuchMethodError ignore) {
+            }
             ordenDAO.create(orden);
         } catch (DomainValidationException dve) {
             throw dve;
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating orden retiro", e);
+            throw new RuntimeException("Error al crear la orden de retiro", e);
         }
     }
 
@@ -304,8 +292,9 @@ public class PersistenceApi implements IApi {
             List<OrdenRetiroDTO> result = new ArrayList<>();
             List<OrdenRetiro> ordenes = ordenDAO.findAll();
             for (OrdenRetiro o : ordenes) {
-                OrdenRetiroDTO dto = new OrdenRetiroDTO(o.getIdOrdenes(), o.getPedido() == null ? null : o.getPedido().getId(), o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(), o.getEstado() == null ? null : o.getEstado().name());
-                // visitas
+                OrdenRetiroDTO dto = new OrdenRetiroDTO(o.getIdOrdenes(), o.getPedido() == null ? null : o.getPedido().getId(),
+                        o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(),
+                        o.getEstado() == null ? null : o.getEstado().name());
                 if (o.getVisitas() != null) {
                     for (Visita v : o.getVisitas()) dto.addVisita(mapVisitaToDTO(v));
                 }
@@ -313,7 +302,7 @@ public class PersistenceApi implements IApi {
             }
             return result;
         } catch (SQLException e) {
-            throw new RuntimeException("Error obtaining ordenes", e);
+            throw new RuntimeException("Error al obtener las órdenes de retiro", e);
         }
     }
 
@@ -322,46 +311,56 @@ public class PersistenceApi implements IApi {
         try {
             OrdenRetiro o = ordenDAO.findById(id);
             if (o == null) return null;
-            OrdenRetiroDTO dto = new OrdenRetiroDTO(o.getIdOrdenes(), o.getPedido() == null ? null : o.getPedido().getId(), o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(), o.getEstado() == null ? null : o.getEstado().name());
-            if (o.getVisitas() != null) for (Visita v : o.getVisitas()) dto.addVisita(mapVisitaToDTO(v));
+            OrdenRetiroDTO dto = new OrdenRetiroDTO(o.getIdOrdenes(),
+                    o.getPedido() == null ? null : o.getPedido().getId(),
+                    o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(),
+                    o.getEstado() == null ? null : o.getEstado().name());
+            if (o.getVisitas() != null)
+                for (Visita v : o.getVisitas())
+                    dto.addVisita(mapVisitaToDTO(v));
             return dto;
         } catch (SQLException e) {
-            throw new RuntimeException("Error obtaining orden by id", e);
+            throw new RuntimeException("Error al obtener la orden por ID", e);
         }
     }
 
     @Override
     public void eliminarOrdenRetiro(Integer id) {
         try {
-            // delegate to DAO which will handle cascading
             ordenDAO.delete(id);
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting orden retiro", e);
+            throw new RuntimeException("Error al eliminar la orden de retiro", e);
         }
     }
 
-    // Visitas - delegate to VisitaDAO
+    // ==================== VISITAS ====================
+
     @Override
     public void crearVisita(VisitaDTO visita) {
         try {
-            Visita v = new Visita(visita.getId() == null ? 0 : visita.getId(), visita.getVisitante(), visita.getFechaHora(), visita.getMotivo(), visita.isConfirmada(), visita.getCantidadBienesRecogidos(), null, visita.getObservaciones(), null, visita.isVisitaFinal());
-            // set orden placeholder if provided
-            if (visita.getOrdenRetiroId() != null) {
+            Visita v = new Visita(visita.getId() == null ? 0 : visita.getId(), visita.getVisitante(), visita.getFechaHora(),
+                    visita.getMotivo(), visita.isConfirmada(), visita.getCantidadBienesRecogidos(), null,
+                    visita.getObservaciones(), null, visita.isVisitaFinal());
+
+            // si viene con una orden asociada, la seteamos
+            if (visita.getOrdenRetiroId() != null)
                 v.setOrdenRetiro(new ar.edu.unrn.seminario.modelo.OrdenRetiro(visita.getOrdenRetiroId(), null, null));
-            }
-            // add articulos
+
+            // agregamos los artículos recogidos si hay
             if (visita.getArticulosRecogidos() != null) {
                 List<ar.edu.unrn.seminario.modelo.Articulo> arts = new ArrayList<>();
-                for (ArticuloDTO a : visita.getArticulosRecogidos()) arts.add(new ar.edu.unrn.seminario.modelo.Articulo(a.getNombre(), a.getCantidad(), a.getTipoDonacion() == null ? null : ar.edu.unrn.seminario.modelo.TipoDonacion.valueOf(a.getTipoDonacion())));
+                for (ArticuloDTO a : visita.getArticulosRecogidos())
+                    arts.add(new ar.edu.unrn.seminario.modelo.Articulo(a.getNombre(), a.getCantidad(),
+                            a.getTipoDonacion() == null ? null : ar.edu.unrn.seminario.modelo.TipoDonacion.valueOf(a.getTipoDonacion())));
                 v.setArticulosRecogidos(arts);
             }
-            // validate visita if method exists
+
             try { v.validate(); } catch (NoSuchMethodError ignore) {}
             visitaDAO.create(v);
         } catch (DomainValidationException dve) {
             throw dve;
         } catch (SQLException e) {
-            throw new RuntimeException("Error creating visita", e);
+            throw new RuntimeException("Error al crear la visita", e);
         }
     }
 
@@ -373,7 +372,7 @@ public class PersistenceApi implements IApi {
             for (Visita v : visitas) result.add(mapVisitaToDTO(v));
             return result;
         } catch (SQLException e) {
-            throw new RuntimeException("Error obtaining visitas", e);
+            throw new RuntimeException("Error al obtener las visitas", e);
         }
     }
 
@@ -384,7 +383,7 @@ public class PersistenceApi implements IApi {
             if (v == null) return null;
             return mapVisitaToDTO(v);
         } catch (SQLException e) {
-            throw new RuntimeException("Error obtaining visita by id", e);
+            throw new RuntimeException("Error al obtener la visita por ID", e);
         }
     }
 
@@ -393,17 +392,20 @@ public class PersistenceApi implements IApi {
         try {
             visitaDAO.cancelar(id);
         } catch (SQLException e) {
-            throw new RuntimeException("Error cancelling visita", e);
+            throw new RuntimeException("Error al cancelar la visita", e);
         }
     }
 
-    // helpers
+    // ==================== HELPERS ====================
+
     private VisitaDTO mapVisitaToDTO(Visita v) {
         List<ArticuloDTO> articulos = new ArrayList<>();
         if (v.getArticulosRecogidos() != null) {
-            for (ar.edu.unrn.seminario.modelo.Articulo a : v.getArticulosRecogidos()) articulos.add(new ArticuloDTO(a.getNombre(), a.getCantidad(), a.getTipo() == null ? null : a.getTipo().name()));
+            for (ar.edu.unrn.seminario.modelo.Articulo a : v.getArticulosRecogidos())
+                articulos.add(new ArticuloDTO(a.getNombre(), a.getCantidad(), a.getTipo() == null ? null : a.getTipo().name()));
         }
         Integer ordenId = v.getOrdenRetiro() == null ? null : v.getOrdenRetiro().getIdOrdenes();
-        return new VisitaDTO(v.getId(), v.getVisitante(), v.getFechaHora(), v.getMotivo(), v.isConfirmada(), v.getCantidadBienesRecogidos(), articulos, v.getObservaciones(), ordenId, v.isVisitaFinal());
+        return new VisitaDTO(v.getId(), v.getVisitante(), v.getFechaHora(), v.getMotivo(), v.isConfirmada(),
+                v.getCantidadBienesRecogidos(), articulos, v.getObservaciones(), ordenId, v.isVisitaFinal());
     }
 }

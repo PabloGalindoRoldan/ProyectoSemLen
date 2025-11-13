@@ -16,9 +16,9 @@ public class Rol {
 		this.codigo = codigo;
 		this.nombre = nombre;
 		if (codigo == null || codigo <= 0)
-			throw new DomainValidationException("Rol.codigo must be positive");
+			throw new DomainValidationException("Rol.codigo debe ser positivo");
 		if (nombre == null || nombre.trim().isEmpty())
-			throw new DomainValidationException("Rol.nombre is required");
+			throw new DomainValidationException("Rol.nombre es requerido");
 	}
 
 	public Integer getCodigo() {
@@ -27,7 +27,7 @@ public class Rol {
 
 	public void setCodigo(Integer codigo) {
 		if (codigo == null || codigo <= 0)
-			throw new DomainValidationException("Rol.codigo must be positive");
+			throw new DomainValidationException("Rol.codigo debe ser positivo");
 		this.codigo = codigo;
 	}
 
@@ -37,7 +37,7 @@ public class Rol {
 
 	public void setNombre(String nombre) {
 		if (nombre == null || nombre.trim().isEmpty())
-			throw new DomainValidationException("Rol.nombre is required");
+			throw new DomainValidationException("Rol.nombre es requerido");
 		this.nombre = nombre;
 	}
 
