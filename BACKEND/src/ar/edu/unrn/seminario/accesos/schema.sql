@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
   observaciones TEXT,
   necesitaVehiculo BOOLEAN DEFAULT FALSE,
   donante_username VARCHAR(100),
-  fecha_creacion DATETIME,
+  fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
   activo BOOLEAN DEFAULT TRUE,
   puntaje_total INT DEFAULT 0,
   FOREIGN KEY (donante_username) REFERENCES usuarios(usuario)
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS ordenes_retiro (
   id INT PRIMARY KEY AUTO_INCREMENT,
   pedido_id INT,
   voluntario_username VARCHAR(100),
-  fecha_generacion DATETIME,
+  fecha_generacion DATETIME DEFAULT CURRENT_TIMESTAMP,
   estado VARCHAR(50),
   FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE,
   FOREIGN KEY (voluntario_username) REFERENCES usuarios(usuario)
@@ -90,19 +90,27 @@ INSERT IGNORE INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, act
 ('donante1', 'd123', 'Donante Uno', 'don1@example.com', 4, 1),
 ('vol2', 'v456', 'Voluntario Dos', 'vol2@example.com', 5, 1);
 
-INSERT INTO pedidos (descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total) VALUES
-('Pedido de ropa y alimentos', 'Ropa usada en buen estado, alimentos no perecederos', 1, 'pgalindo', NOW(), 1, 30),
-('Pedido de muebles', 'Camas, mesas y sillas en buen estado', 1, 'donante1', NOW(), 1, 50);
+-- Pedido 1
+INSERT INTO pedidos (descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total)
+VALUES ('Pedido de ropa y alimentos', 'Ropa usada en buen estado, alimentos no perecederos', 1, 'pgalindo', NOW(), 1, 30);
+SET @pedido1_id = LAST_INSERT_ID();
 
 INSERT INTO donaciones (pedido_id, tipoDonacion, categoria, puntaje) VALUES
-(LAST_INSERT_ID()-1, 'ROPA', 'INDUMENTARIA', 10),
-(LAST_INSERT_ID()-1, 'ALIMENTO', 'NO_PERECEDERO', 20),
-(LAST_INSERT_ID(), 'MUEBLE', 'HOGAR', 30),
-(LAST_INSERT_ID(), 'MUEBLE', 'HOGAR', 20);
+(@pedido1_id, 'ROPA', 'INDUMENTARIA', 10),
+(@pedido1_id, 'ALIMENTO', 'NO_PERECEDERO', 20);
+
+-- Pedido 2
+INSERT INTO pedidos (descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total)
+VALUES ('Pedido de muebles', 'Camas, mesas y sillas en buen estado', 1, 'donante1', NOW(), 1, 50);
+SET @pedido2_id = LAST_INSERT_ID();
+
+INSERT INTO donaciones (pedido_id, tipoDonacion, categoria, puntaje) VALUES
+(@pedido2_id, 'MUEBLE', 'HOGAR', 30),
+(@pedido2_id, 'MUEBLE', 'HOGAR', 20);
 
 INSERT INTO ordenes_retiro (pedido_id, voluntario_username, fecha_generacion, estado) VALUES
-(1, 'mvoluntario', NOW(), 'PENDIENTE'),
-(2, 'vol2', NOW(), 'PENDIENTE');
+(@pedido1_id, 'mvoluntario', NOW(), 'PENDIENTE'),
+(@pedido2_id, 'vol2', NOW(), 'PENDIENTE');
 
 INSERT INTO visitas (visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal) VALUES
 ('Familia Perez', NOW(), 'Entrega de ropa', 1, 10, 'Todo embalado', 1, 0);
