@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.time.LocalDateTime;
 
 public class OrdenRetiroDAOJDBC implements OrdenRetiroDAO {
 
@@ -49,62 +50,90 @@ public class OrdenRetiroDAOJDBC implements OrdenRetiroDAO {
 
     @Override
     public List<OrdenRetiro> findAll() throws SQLException {
-        try {
-            List<OrdenRetiro> result = new ArrayList<>();
-            try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ORDENES); ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Integer id = rs.getInt("id");
-                    Integer pedidoId = rs.getInt("pedido_id");
-                    String voluntario = rs.getString("voluntario_username");
-                    String estadoStr = rs.getString("estado");
-                    // crear placeholders
-                    PedidoDonacion pedido = new PedidoDonacion(pedidoId, null, null, false, new Usuario(null, null, null, null, null));
-                    Usuario u = new Usuario(voluntario, null, null, null, null);
-                    OrdenRetiro ord = new OrdenRetiro(id, pedido, u);
-                    //actualizar estado
-                    if (estadoStr != null) {
-                        try {
-                        	ord.setEstado(EstadoOrden.valueOf(estadoStr));
-                        } catch (IllegalArgumentException e) {
-                            logger.warning("Estado inválido en BD para orden id=" + id + ": " + estadoStr);
-                        }
-                    }                              
-                    // cargar visitas via visitaDAO
-                    List<Visita> visitas = visitaDAO.listarPorOrden(id);
-                    ord.setVisitas(visitas);
-                    result.add(ord);
+        List<OrdenRetiro> result = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_ORDENES);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Integer id = rs.getInt("id");
+                Integer pedidoId = rs.getInt("pedido_id");
+                String voluntarioUsername = rs.getString("voluntario_username");
+                String estadoStr = rs.getString("estado");
+                Timestamp ts = rs.getTimestamp("fecha_generacion");
+                LocalDateTime fecha = (ts != null) ? ts.toLocalDateTime() : null;
+
+                // Crear objetos relacionados (placeholder)
+                PedidoDonacion pedido = new PedidoDonacion(
+                    pedidoId, null, null, false,
+                    new Usuario(null, null, null, null, null)
+                );
+                Usuario voluntario = new Usuario(voluntarioUsername, null, null, null, null);
+
+                // Convertir estado con seguridad
+                EstadoOrden estado = EstadoOrden.PENDIENTE;
+                if (estadoStr != null) {
+                    try {
+                        estado = EstadoOrden.valueOf(estadoStr);
+                    } catch (IllegalArgumentException e) {
+                        logger.warning("Estado inválido en BD para orden id=" + id + ": " + estadoStr);
+                    }
                 }
+
+                // Cargar visitas
+                List<Visita> visitas = visitaDAO.listarPorOrden(id);
+
+                // Crear la orden completa con fecha y estado
+                OrdenRetiro orden = new OrdenRetiro(id, pedido, voluntario, fecha, estado, visitas);
+                result.add(orden);
             }
-            return result;
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error finding ordenes retiro", e);
             throw new PersistenceException("Error finding ordenes retiro", e);
         }
+        return result;
     }
 
     @Override
     public OrdenRetiro findById(int id) throws SQLException {
-        try {
-            try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(SELECT_ORDEN_BY_ID)) {
-                ps.setInt(1, id);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        Integer pedidoId = rs.getInt("pedido_id");
-                        String voluntario = rs.getString("voluntario_username");
-                        PedidoDonacion pedido = new PedidoDonacion(pedidoId, null, null, false, new Usuario(null, null, null, null, null));
-                        Usuario u = new Usuario(voluntario, null, null, null, null);
-                        OrdenRetiro ord = new OrdenRetiro(id, pedido, u);
-                        List<Visita> visitas = visitaDAO.listarPorOrden(id);
-                        ord.setVisitas(visitas);
-                        return ord;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_ORDEN_BY_ID)) {
+
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Integer pedidoId = rs.getInt("pedido_id");
+                    String voluntarioUsername = rs.getString("voluntario_username");
+                    String estadoStr = rs.getString("estado");
+                    Timestamp ts = rs.getTimestamp("fecha_generacion");
+                    LocalDateTime fecha = (ts != null) ? ts.toLocalDateTime() : null;
+
+                    PedidoDonacion pedido = new PedidoDonacion(
+                        pedidoId, null, null, false,
+                        new Usuario(null, null, null, null, null)
+                    );
+                    Usuario voluntario = new Usuario(voluntarioUsername, null, null, null, null);
+
+                    EstadoOrden estado = EstadoOrden.PENDIENTE;
+                    if (estadoStr != null) {
+                        try {
+                            estado = EstadoOrden.valueOf(estadoStr);
+                        } catch (IllegalArgumentException e) {
+                            logger.warning("Estado inválido en BD para orden id=" + id + ": " + estadoStr);
+                        }
                     }
+
+                    List<Visita> visitas = visitaDAO.listarPorOrden(id);
+                    return new OrdenRetiro(id, pedido, voluntario, fecha, estado, visitas);
                 }
             }
-            return null;
+
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error finding orden retiro by id=" + id, e);
             throw new PersistenceException("Error finding orden retiro by id=" + id, e);
         }
+        return null;
     }
 
     @Override

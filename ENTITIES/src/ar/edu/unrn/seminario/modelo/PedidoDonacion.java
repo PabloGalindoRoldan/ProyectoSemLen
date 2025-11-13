@@ -22,6 +22,19 @@ public class PedidoDonacion {
 		this.fechaCreacion = LocalDateTime.now();
 		this.donante = donante;
 	}
+	
+	public PedidoDonacion(Integer id, String descripcion, String observaciones, boolean necesitaVehiculo,
+            Usuario donante, LocalDateTime fechaCreacion, List<Donacion> donaciones) {
+		this.id = id;
+		this.descripcion = descripcion;
+		this.observaciones = observaciones;
+		this.necesitaVehiculo = necesitaVehiculo;
+		this.donante = donante;
+		this.fechaCreacion = (fechaCreacion != null) ? fechaCreacion : LocalDateTime.now();
+		if (donaciones != null) {
+		this.donaciones.addAll(donaciones);
+	}
+}
 
 	public PedidoDonacion(Integer id, String descripcion, String observaciones, boolean necesitaVehiculo, Usuario donante, List<Donacion> donaciones) {
 		this(id, descripcion, observaciones, necesitaVehiculo, donante);

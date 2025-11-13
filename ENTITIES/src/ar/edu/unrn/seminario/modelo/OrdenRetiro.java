@@ -28,7 +28,9 @@ public class OrdenRetiro {
         this.voluntario = voluntario;
         this.fechaGeneracion = fechaGeneracion;
         if (fechaGeneracion == null) {
-        	fechaGeneracion = LocalDateTime.now();
+        	this.fechaGeneracion = LocalDateTime.now();
+        } else {
+        	this.fechaGeneracion = fechaGeneracion;
         };
         this.estado = estado;
         if (estado == null) {

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.time.LocalDateTime;
 
 public class PedidoDAOJDBC implements PedidoDAO {
 
@@ -76,19 +77,19 @@ public class PedidoDAOJDBC implements PedidoDAO {
              PreparedStatement ps = conn.prepareStatement(SELECT_PEDIDOS);
              ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                Integer id = rs.getInt("id");
-                String descripcion = rs.getString("descripcion");
-                String observaciones = rs.getString("observaciones");
-                boolean necesitaVehiculo = rs.getBoolean("necesitaVehiculo");
-                String donante = rs.getString("donante_username");
-                Usuario u = new Usuario(donante, null, null, null, null);
-                List<Donacion> donaciones = donacionDAO.listarPorPedido(id);
+        	while (rs.next()) {
+        	    Integer id = rs.getInt("id");
+        	    String descripcion = rs.getString("descripcion");
+        	    String observaciones = rs.getString("observaciones");
+        	    boolean necesitaVehiculo = rs.getBoolean("necesitaVehiculo");
+        	    String donante = rs.getString("donante_username");
+        	    Usuario u = new Usuario(donante, null, null, null, null);
+        	    LocalDateTime fecha = rs.getTimestamp("fecha_creacion").toLocalDateTime(); 
+        	    List<Donacion> donaciones = donacionDAO.listarPorPedido(id);
 
-                // Creo el pedido con sus datos y lo agrego a la lista
-                PedidoDonacion p = new PedidoDonacion(id, descripcion, observaciones, necesitaVehiculo, u, donaciones);
-                result.add(p);
-            }
+        	    PedidoDonacion p = new PedidoDonacion(id, descripcion, observaciones, necesitaVehiculo, u, fecha, donaciones);
+        	    result.add(p);
+        	}
 
         } catch (SQLException e) {
             // Algo falló al buscar los pedidos
@@ -106,17 +107,17 @@ public class PedidoDAOJDBC implements PedidoDAO {
 
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String descripcion = rs.getString("descripcion");
-                    String observaciones = rs.getString("observaciones");
-                    boolean necesitaVehiculo = rs.getBoolean("necesitaVehiculo");
-                    String donante = rs.getString("donante_username");
-                    Usuario u = new Usuario(donante, null, null, null, null);
-                    List<Donacion> donaciones = donacionDAO.listarPorPedido(id);
+            	if (rs.next()) {
+            	    String descripcion = rs.getString("descripcion");
+            	    String observaciones = rs.getString("observaciones");
+            	    boolean necesitaVehiculo = rs.getBoolean("necesitaVehiculo");
+            	    String donante = rs.getString("donante_username");
+            	    Usuario u = new Usuario(donante, null, null, null, null);
+            	    LocalDateTime fecha = rs.getTimestamp("fecha_creacion").toLocalDateTime();  
+            	    List<Donacion> donaciones = donacionDAO.listarPorPedido(id);
 
-                    // Devuelvo el pedido encontrado
-                    return new PedidoDonacion(id, descripcion, observaciones, necesitaVehiculo, u, donaciones);
-                }
+            	    return new PedidoDonacion(id, descripcion, observaciones, necesitaVehiculo, u, fecha, donaciones);
+            	}
             }
         } catch (SQLException e) {
             // Error al buscar un pedido por ID
@@ -136,7 +137,7 @@ public class PedidoDAOJDBC implements PedidoDAO {
                 // Primero borro las donaciones asociadas para evitar errores de FK
                 donacionDAO.eliminarPorPedido(conn, id);
 
-                // Luego borro el pedido en sí
+                // Luego borro el pedido
                 try (PreparedStatement ps = conn.prepareStatement(DELETE_PEDIDO)) {
                     ps.setInt(1, id);
                     ps.executeUpdate();
