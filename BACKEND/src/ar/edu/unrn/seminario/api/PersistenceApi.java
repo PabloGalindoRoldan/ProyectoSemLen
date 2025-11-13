@@ -224,13 +224,23 @@ public class PersistenceApi implements IApi {
                         dd.add(new DonacionDTO(d.getTipoDonacion().name(), d.getCategoria(), d.getPuntaje()));
                 }
                 String donante = p.getDonante() == null ? null : p.getDonante().getUsuario();
-                result.add(new PedidoDonacionDTO(p.getId(), p.getDescripcion(), p.getObservaciones(), p.necesitaVehiculo(), donante, dd, true));
+                result.add(new PedidoDonacionDTO(
+                    p.getId(),
+                    p.getDescripcion(),
+                    p.getObservaciones(),
+                    p.necesitaVehiculo(),
+                    donante,
+                    p.getFechaCreacion(),
+                    dd,
+                    true
+                ));
             }
             return result;
         } catch (SQLException e) {
             throw new RuntimeException("Error al obtener los pedidos de donación", e);
         }
     }
+
 
     @Override
     public PedidoDonacionDTO obtenerPedidoDonacionPorId(Integer id) {
@@ -242,7 +252,16 @@ public class PersistenceApi implements IApi {
                 for (Donacion d : p.getDonaciones())
                     dd.add(new DonacionDTO(d.getTipoDonacion().name(), d.getCategoria(), d.getPuntaje()));
             String donante = p.getDonante() == null ? null : p.getDonante().getUsuario();
-            return new PedidoDonacionDTO(p.getId(), p.getDescripcion(), p.getObservaciones(), p.necesitaVehiculo(), donante, dd, true);
+            return new PedidoDonacionDTO(
+            	    p.getId(),
+            	    p.getDescripcion(),
+            	    p.getObservaciones(),
+            	    p.necesitaVehiculo(),
+            	    donante,
+            	    p.getFechaCreacion(),  
+            	    dd,
+            	    true           
+            	);
         } catch (SQLException e) {
             throw new RuntimeException("Error al obtener el pedido por ID", e);
         }
@@ -292,9 +311,13 @@ public class PersistenceApi implements IApi {
             List<OrdenRetiroDTO> result = new ArrayList<>();
             List<OrdenRetiro> ordenes = ordenDAO.findAll();
             for (OrdenRetiro o : ordenes) {
-                OrdenRetiroDTO dto = new OrdenRetiroDTO(o.getIdOrdenes(), o.getPedido() == null ? null : o.getPedido().getId(),
-                        o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(),
-                        o.getEstado() == null ? null : o.getEstado().name());
+                OrdenRetiroDTO dto = new OrdenRetiroDTO(
+                	    o.getIdOrdenes(),
+                	    o.getPedido() == null ? null : o.getPedido().getId(),
+                	    o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(),
+                	    o.getEstado() == null ? null : o.getEstado().name(),
+                	    o.getFechaGeneracion()
+                	);
                 if (o.getVisitas() != null) {
                     for (Visita v : o.getVisitas()) dto.addVisita(mapVisitaToDTO(v));
                 }
@@ -311,10 +334,13 @@ public class PersistenceApi implements IApi {
         try {
             OrdenRetiro o = ordenDAO.findById(id);
             if (o == null) return null;
-            OrdenRetiroDTO dto = new OrdenRetiroDTO(o.getIdOrdenes(),
-                    o.getPedido() == null ? null : o.getPedido().getId(),
-                    o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(),
-                    o.getEstado() == null ? null : o.getEstado().name());
+            OrdenRetiroDTO dto = new OrdenRetiroDTO(
+            	    o.getIdOrdenes(),
+            	    o.getPedido() == null ? null : o.getPedido().getId(),
+            	    o.getVoluntario() == null ? null : o.getVoluntario().getUsuario(),
+            	    o.getEstado() == null ? null : o.getEstado().name(),
+            	    o.getFechaGeneracion()
+            	);
             if (o.getVisitas() != null)
                 for (Visita v : o.getVisitas())
                     dto.addVisita(mapVisitaToDTO(v));

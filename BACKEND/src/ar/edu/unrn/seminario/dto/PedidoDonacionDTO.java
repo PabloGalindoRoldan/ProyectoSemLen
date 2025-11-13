@@ -16,13 +16,14 @@ public class PedidoDonacionDTO {
     private int puntajeTotal = 0;
 
     public PedidoDonacionDTO(Integer id, String descripcion, String observaciones,
-            boolean necesitaVehiculo, String donanteUsername, List<DonacionDTO> donaciones, boolean activo) {
+            boolean necesitaVehiculo, String donanteUsername, LocalDateTime fechaCreacion,
+            List<DonacionDTO> donaciones, boolean activo) {
         this.id = id;
         this.descripcion = descripcion;
         this.observaciones = observaciones;
         this.necesitaVehiculo = necesitaVehiculo;
         this.donanteUsername = donanteUsername;
-        this.fechaCreacion = LocalDateTime.now();
+        this.fechaCreacion = fechaCreacion; 
         this.activo = activo;
 
         if (donaciones != null) {

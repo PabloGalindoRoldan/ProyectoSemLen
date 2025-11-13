@@ -12,12 +12,13 @@ public class OrdenRetiroDTO {
     private Integer pedidoId;
     private String voluntarioUsername;
 
-    public OrdenRetiroDTO(Integer idOrdenes, Integer pedidoId, String voluntarioUsername, String estado) {
-        this.idOrdenes = idOrdenes;
-        this.pedidoId = pedidoId;
-        this.voluntarioUsername = voluntarioUsername;
-        this.fechaGeneracion = LocalDateTime.now();
-        this.estado = estado;
+    public OrdenRetiroDTO(Integer idOrdenes, Integer pedidoId, String voluntarioUsername,
+            String estado, LocalDateTime fechaGeneracion) {
+			this.idOrdenes = idOrdenes;
+			this.pedidoId = pedidoId;
+			this.voluntarioUsername = voluntarioUsername;
+			this.fechaGeneracion = fechaGeneracion;  // keep DB value
+			this.estado = estado;
     }
 
     public Integer getIdOrdenes() {
