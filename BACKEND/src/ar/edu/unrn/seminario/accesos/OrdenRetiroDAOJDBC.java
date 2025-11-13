@@ -18,7 +18,7 @@ public class OrdenRetiroDAOJDBC implements OrdenRetiroDAO {
 
     private static final Logger logger = Logger.getLogger(OrdenRetiroDAOJDBC.class.getName());
 
-    private static final String INSERT_ORDEN = "INSERT INTO ordenes_retiro (id, pedido_id, voluntario_username, fecha_generacion, estado) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_ORDEN = "INSERT INTO ordenes_retiro (id, pedido_id, voluntario_username, estado) VALUES (?, ?, ?, ?)";
     private static final String SELECT_ORDENES = "SELECT id, pedido_id, voluntario_username, fecha_generacion, estado FROM ordenes_retiro";
     private static final String SELECT_ORDEN_BY_ID = "SELECT id, pedido_id, voluntario_username, fecha_generacion, estado FROM ordenes_retiro WHERE id = ?";
     private static final String DELETE_ORDEN = "DELETE FROM ordenes_retiro WHERE id = ?";
@@ -28,20 +28,21 @@ public class OrdenRetiroDAOJDBC implements OrdenRetiroDAO {
 
     @Override
     public int create(OrdenRetiro orden) throws SQLException {
-        try {
-            try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(INSERT_ORDEN, Statement.RETURN_GENERATED_KEYS)) {
-                int useId = orden.getIdOrdenes() == null ? 0 : orden.getIdOrdenes();
-                ps.setInt(1, useId);
-                ps.setInt(2, orden.getPedido() == null ? 0 : orden.getPedido().getId());
-                ps.setString(3, orden.getVoluntario() == null ? null : orden.getVoluntario().getUsuario());
-                ps.setTimestamp(4, orden.getFechaGeneracion() == null ? new Timestamp(System.currentTimeMillis()) : Timestamp.valueOf(orden.getFechaGeneracion()));
-                ps.setString(5, orden.getEstado() == null ? "PENDIENTE" : orden.getEstado().name());
-                ps.executeUpdate();
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) return rs.getInt(1);
-                }
-                return useId;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(INSERT_ORDEN, Statement.RETURN_GENERATED_KEYS)) {
+
+            int useId = orden.getIdOrdenes() == null ? 0 : orden.getIdOrdenes();
+            ps.setInt(1, useId);
+            ps.setInt(2, orden.getPedido() == null ? 0 : orden.getPedido().getId());
+            ps.setString(3, orden.getVoluntario() == null ? null : orden.getVoluntario().getUsuario());
+            ps.setString(4, orden.getEstado() == null ? "PENDIENTE" : orden.getEstado().name());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) return rs.getInt(1);
             }
+            return useId;
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error creating orden retiro", e);
             throw new PersistenceException("Error creating orden retiro", e);

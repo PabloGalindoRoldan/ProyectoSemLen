@@ -16,7 +16,7 @@ public class PedidoDAOJDBC implements PedidoDAO {
 
     private static final Logger logger = Logger.getLogger(PedidoDAOJDBC.class.getName());
 
-    private static final String INSERT_PEDIDO = "INSERT INTO pedidos (id, descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_PEDIDO = "INSERT INTO pedidos (id, descripcion, observaciones, necesitaVehiculo, donante_username, activo, puntaje_total) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_PEDIDOS = "SELECT id, descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total FROM pedidos";
     private static final String SELECT_PEDIDO_BY_ID = "SELECT id, descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total FROM pedidos WHERE id = ?";
     private static final String DELETE_PEDIDO = "DELETE FROM pedidos WHERE id = ?";
@@ -35,9 +35,8 @@ public class PedidoDAOJDBC implements PedidoDAO {
                 ps.setBoolean(4, pedido.necesitaVehiculo());
                 Usuario donante = pedido.getDonante();
                 ps.setString(5, donante == null ? null : donante.getUsuario());
-                ps.setTimestamp(6, Timestamp.valueOf(pedido.getFechaCreacion()));
-                ps.setBoolean(7, true);
-                ps.setInt(8, pedido.calcularPuntajeTotal());
+                ps.setBoolean(6, true);
+                ps.setInt(7, pedido.calcularPuntajeTotal());
                 ps.executeUpdate();
 
                 int generatedId = 0;
