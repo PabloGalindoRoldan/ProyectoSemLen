@@ -1,9 +1,6 @@
 package ar.edu.unrn.seminario.exception;
 
-/**
- * Runtime exception to represent persistence layer errors.
- * It logs the error to stderr in the constructor as requested.
- */
+
 public class PersistenceException extends RuntimeException {
     public PersistenceException(String message) {
         super(message);

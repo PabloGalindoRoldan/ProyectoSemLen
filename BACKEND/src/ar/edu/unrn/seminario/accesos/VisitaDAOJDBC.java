@@ -81,6 +81,34 @@ public class VisitaDAOJDBC implements VisitaDAO {
                             psUpd.executeUpdate();
                         }
                     }
+                    
+                 // Si la visita NO es final y pertenece a una orden, verificar si debe pasar a EN_EJECUCION
+                    if (!visita.isVisitaFinal() && visita.getOrdenRetiro() != null && visita.getOrdenRetiro().getIdOrdenes() != null) {
+
+                        int ordenId = visita.getOrdenRetiro().getIdOrdenes();
+
+                        // Contar visitas de la orden
+                        int cantidadVisitas = 0;
+                        try (PreparedStatement psCount = conn.prepareStatement(
+                                "SELECT COUNT(*) FROM visitas WHERE orden_retiro_id = ?")) {
+                            psCount.setInt(1, ordenId);
+                            try (ResultSet rsCount = psCount.executeQuery()) {
+                                if (rsCount.next()) {
+                                    cantidadVisitas = rsCount.getInt(1);
+                                }
+                            }
+                        }
+
+                        // Si hay al menos 1 visita -> pasar a EN_EJECUCION
+                        if (cantidadVisitas > 0) {
+                            try (PreparedStatement psUpd = conn.prepareStatement(
+                                    "UPDATE ordenes_retiro SET estado = 'EN_EJECUCION' WHERE id = ?")) {
+                                psUpd.setInt(1, ordenId);
+                                psUpd.executeUpdate();
+                            }
+                        }
+                    }
+
 
                     conn.commit(); // confirmamos todo
                     return visitaId;

@@ -51,6 +51,9 @@ public class Usuario {
 	}
 
 	public void setEmail(String email) {
+		if (email.trim().isEmpty()) {
+			throw new DomainValidationException("Usuario.email invalido");
+		}
 		if (email != null && !email.trim().isEmpty()) {
 			if (!email.contains("@")) throw new DomainValidationException("Usuario.email invalido");
 		}
@@ -85,10 +88,11 @@ public class Usuario {
 
 	// metodo de validacion de entidades
 	public void validate() {
+		System.out.println(this.usuario + " " + this.contrasena + " " + this.nombre + " " + this.email);
 		if (this.usuario == null || this.usuario.trim().isEmpty()) throw new DomainValidationException("Usuario.usuario es requerido");
 		if (this.contrasena == null || this.contrasena.trim().isEmpty()) throw new DomainValidationException("Usuario.contrasena es requerido");
 		if (this.nombre == null || this.nombre.trim().isEmpty()) throw new DomainValidationException("Usuario.nombre es requerido");
-		//if (this.email != null && !this.email.trim().isEmpty() && !this.email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
+		if (this.email != null && !this.email.trim().isEmpty() && !this.email.contains("@")) throw new DomainValidationException("Usuario.email invalid");
 	}
 
 	@Override

@@ -1,9 +1,0 @@
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\AltaOrdenRetiro.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\AltaPedido.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\AltaUsuario.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\AltaVisita.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\ListadoOrdenes.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\ListadoPedidos.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\ListadoUsuario.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\gui\VentanaPrincipal.java
-C:\Users\Lightning\Desktop\ECLIPSE\proyecto\FRONTEND\src\ar\edu\unrn\seminario\main\Main.java

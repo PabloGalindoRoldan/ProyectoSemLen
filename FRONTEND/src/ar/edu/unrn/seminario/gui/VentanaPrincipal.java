@@ -77,12 +77,12 @@ public class VentanaPrincipal extends JFrame {
 		JMenu configuracionMenu = new JMenu("Configuración");
 		menuBar.add(configuracionMenu);
 
-		JMenuItem salirMenuItem = new JMenuItem("Salir");
+		/*JMenuItem salirMenuItem = new JMenuItem("Salir");
 		configuracionMenu.add(salirMenuItem);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+		setContentPane(contentPane);*/
 		
 		JMenu pedidoDonacionMenu = new JMenu("Pedidos de Donacion");
 		menuBar.add(pedidoDonacionMenu);

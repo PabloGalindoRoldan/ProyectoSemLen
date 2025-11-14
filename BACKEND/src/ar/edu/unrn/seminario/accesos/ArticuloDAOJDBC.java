@@ -52,7 +52,7 @@ public class ArticuloDAOJDBC implements ArticuloDAO {
                             ar.edu.unrn.seminario.modelo.TipoDonacion t = ar.edu.unrn.seminario.modelo.TipoDonacion.valueOf(tipo);
                             a.setTipo(t);
                         } catch (IllegalArgumentException ex) {
-                            // ignore unknown
+                            // ignora desconocido
                         }
                     }
                     result.add(a);
