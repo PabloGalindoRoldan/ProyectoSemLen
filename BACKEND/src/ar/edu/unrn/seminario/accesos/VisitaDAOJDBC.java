@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class VisitaDAOJDBC implements VisitaDAO {
 
-    // Logger: sirve para registrar mensajes y errores en consola o archivo
+    // Logger: sirve para registrar mensajes y errores en consola
     private static final Logger logger = Logger.getLogger(VisitaDAOJDBC.class.getName());
 
     // Consultas SQL predefinidas
@@ -99,7 +99,7 @@ public class VisitaDAOJDBC implements VisitaDAO {
                             }
                         }
 
-                        // Si hay al menos 1 visita -> pasar a EN_EJECUCION
+                        // Si hay al menos 1 visital, pasar a EN_EJECUCION
                         if (cantidadVisitas > 0) {
                             try (PreparedStatement psUpd = conn.prepareStatement(
                                     "UPDATE ordenes_retiro SET estado = 'EN_EJECUCION' WHERE id = ?")) {

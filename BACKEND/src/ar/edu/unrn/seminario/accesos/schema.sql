@@ -1,14 +1,25 @@
-
-CREATE DATABASE IF NOT EXISTS seminario DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- Recreate seminario database
+DROP DATABASE IF EXISTS seminario;
+CREATE DATABASE seminario DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE seminario;
 
-CREATE TABLE IF NOT EXISTS roles (
+-- Drop tables in reverse dependency order (children first)
+DROP TABLE IF EXISTS articulos;
+DROP TABLE IF EXISTS visitas;
+DROP TABLE IF EXISTS ordenes_retiro;
+DROP TABLE IF EXISTS donaciones;
+DROP TABLE IF EXISTS pedidos;
+DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS roles;
+
+-- Create tables
+CREATE TABLE roles (
   codigo INT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
   activo BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE IF NOT EXISTS usuarios (
+CREATE TABLE usuarios (
   usuario VARCHAR(100) PRIMARY KEY,
   contrasena VARCHAR(255) NOT NULL,
   nombre VARCHAR(255) NOT NULL,
@@ -18,7 +29,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   FOREIGN KEY (rol_codigo) REFERENCES roles(codigo)
 );
 
-CREATE TABLE IF NOT EXISTS pedidos (
+CREATE TABLE pedidos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   descripcion TEXT,
   observaciones TEXT,
@@ -30,18 +41,20 @@ CREATE TABLE IF NOT EXISTS pedidos (
   FOREIGN KEY (donante_username) REFERENCES usuarios(usuario)
 );
 
--- donaciones for pedidos
-CREATE TABLE IF NOT EXISTS donaciones (
+-- TipoDonacion ajustado al enum de Java
+CREATE TABLE donaciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   pedido_id INT,
-  tipoDonacion VARCHAR(100),
+  tipoDonacion ENUM(
+    'ROPA', 'CALZADO', 'ALIMENTOS', 'JUGUETES', 'MUEBLES',
+    'ELECTRONICA', 'HIGIENE', 'MEDICAMENTOS', 'OTRO'
+  ),
   categoria VARCHAR(100),
   puntaje INT,
   FOREIGN KEY (pedido_id) REFERENCES pedidos(id) ON DELETE CASCADE
 );
 
--- ordenes de retiro
-CREATE TABLE IF NOT EXISTS ordenes_retiro (
+CREATE TABLE ordenes_retiro (
   id INT PRIMARY KEY AUTO_INCREMENT,
   pedido_id INT,
   voluntario_username VARCHAR(100),
@@ -51,8 +64,7 @@ CREATE TABLE IF NOT EXISTS ordenes_retiro (
   FOREIGN KEY (voluntario_username) REFERENCES usuarios(usuario)
 );
 
--- visitas (linked to ordenes_retiro)
-CREATE TABLE IF NOT EXISTS visitas (
+CREATE TABLE visitas (
   id INT PRIMARY KEY AUTO_INCREMENT,
   visitante VARCHAR(100),
   fechaHora DATETIME,
@@ -65,23 +77,25 @@ CREATE TABLE IF NOT EXISTS visitas (
   FOREIGN KEY (orden_retiro_id) REFERENCES ordenes_retiro(id) ON DELETE CASCADE
 );
 
--- articulos recogidos en cada visita
-CREATE TABLE IF NOT EXISTS articulos (
+CREATE TABLE articulos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   visita_id INT,
   nombre VARCHAR(255),
   cantidad INT,
-  tipoDonacion VARCHAR(100),
+  tipoDonacion ENUM(
+    'ROPA', 'CALZADO', 'ALIMENTOS', 'JUGUETES', 'MUEBLES',
+    'ELECTRONICA', 'HIGIENE', 'MEDICAMENTOS', 'OTRO'
+  ),
   FOREIGN KEY (visita_id) REFERENCES visitas(id) ON DELETE CASCADE
 );
 
--- sample data
-INSERT IGNORE INTO roles (codigo, nombre, activo) VALUES
+-- Insert initial data
+INSERT INTO roles (codigo, nombre, activo) VALUES
 (1, 'ADMIN', 1),
 (4, 'DONANTE', 1),
 (5, 'VOLUNTARIO', 1);
 
-INSERT IGNORE INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, activo) VALUES
+INSERT INTO usuarios (usuario, contrasena, nombre, email, rol_codigo, activo) VALUES
 ('admin', '1234', 'Admin', 'admin@unrn.edu.ar', 1, 1),
 ('ldifabio', '4', 'Lucas', 'ldifabio@unrn.edu.ar', 4, 1),
 ('bjgorosito', '1234', 'Bruno', 'bjgorosito@unrn.edu.ar', 5, 1),
@@ -97,7 +111,7 @@ SET @pedido1_id = LAST_INSERT_ID();
 
 INSERT INTO donaciones (pedido_id, tipoDonacion, categoria, puntaje) VALUES
 (@pedido1_id, 'ROPA', 'INDUMENTARIA', 10),
-(@pedido1_id, 'ALIMENTO', 'NO_PERECEDERO', 20);
+(@pedido1_id, 'ALIMENTOS', 'NO_PERECEDERO', 20);
 
 -- Pedido 2
 INSERT INTO pedidos (descripcion, observaciones, necesitaVehiculo, donante_username, fecha_creacion, activo, puntaje_total)
@@ -105,28 +119,32 @@ VALUES ('Pedido de muebles', 'Camas, mesas y sillas en buen estado', 1, 'donante
 SET @pedido2_id = LAST_INSERT_ID();
 
 INSERT INTO donaciones (pedido_id, tipoDonacion, categoria, puntaje) VALUES
-(@pedido2_id, 'MUEBLE', 'HOGAR', 30),
-(@pedido2_id, 'MUEBLE', 'HOGAR', 20);
+(@pedido2_id, 'MUEBLES', 'HOGAR', 30),
+(@pedido2_id, 'MUEBLES', 'HOGAR', 20);
 
 INSERT INTO ordenes_retiro (pedido_id, voluntario_username, fecha_generacion, estado) VALUES
-(@pedido1_id, 'mvoluntario', NOW(), 'PENDIENTE'),
-(@pedido2_id, 'vol2', NOW(), 'PENDIENTE');
+(@pedido1_id, 'mvoluntario', NOW(), 'COMPLETADO'),
+(@pedido2_id, 'vol2', NOW(), 'EN_EJECUCION');
 
+-- Visits and items
 INSERT INTO visitas (visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal) VALUES
 ('Familia Perez', NOW(), 'Entrega de ropa', 1, 10, 'Todo embalado', 1, 0);
+SET @visita1_id = LAST_INSERT_ID();
 INSERT INTO articulos (visita_id, nombre, cantidad, tipoDonacion) VALUES
-(LAST_INSERT_ID(), 'Camisa', 5, 'ROPA'),
-(LAST_INSERT_ID(), 'Pantalon', 3, 'ROPA');
+(@visita1_id, 'Camisa', 5, 'ROPA'),
+(@visita1_id, 'Pantalon', 3, 'ROPA');
 
 INSERT INTO visitas (visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal) VALUES
 ('Casa Lopez', NOW(), 'Retiro de muebles', 0, 0, 'Programar visita', 2, 0);
+SET @visita2_id = LAST_INSERT_ID();
 INSERT INTO articulos (visita_id, nombre, cantidad, tipoDonacion) VALUES
-(LAST_INSERT_ID(), 'Mesa', 1, 'MUEBLE');
+(@visita2_id, 'Mesa', 1, 'MUEBLES');
 
 INSERT INTO visitas (visitante, fechaHora, motivo, confirmada, cantidadBienesRecogidos, observaciones, orden_retiro_id, visitaFinal) VALUES
 ('Familia Perez', NOW(), 'Retiro final y cierre', 1, 20, 'Se recogió todo', 1, 1);
+SET @visita3_id = LAST_INSERT_ID();
 INSERT INTO articulos (visita_id, nombre, cantidad, tipoDonacion) VALUES
-(LAST_INSERT_ID(), 'Cama', 2, 'MUEBLE'),
-(LAST_INSERT_ID(), 'Caja de alimentos', 10, 'ALIMENTO');
+(@visita3_id, 'Cama', 2, 'MUEBLES'),
+(@visita3_id, 'Caja de alimentos', 10, 'ALIMENTOS');
 
--- End of schema additions
+-- End of script

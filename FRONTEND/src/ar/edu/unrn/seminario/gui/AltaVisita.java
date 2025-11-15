@@ -36,7 +36,7 @@ public class AltaVisita extends JFrame {
     private JDateChooser dateChooser; 
     private JTextField timeField;
     private JTextField motivoField;
-    private JTextField cantidadField;
+    //private JTextField cantidadField;
     private JTextField articuloNombreField;
     private JTextField articuloCantidadField;
     private JTextField observacionesField;
@@ -93,13 +93,13 @@ public class AltaVisita extends JFrame {
         motivoField.setBounds(120, 87, 420, 22);
         contentPane.add(motivoField);
 
-        JLabel cantidadLabel = new JLabel("Cantidad bienes:");
+        /*JLabel cantidadLabel = new JLabel("Cantidad bienes:");
         cantidadLabel.setBounds(20, 125, 100, 16);
         contentPane.add(cantidadLabel);
 
         cantidadField = new JTextField();
         cantidadField.setBounds(140, 122, 80, 22);
-        contentPane.add(cantidadField);
+        contentPane.add(cantidadField);*/
 
         JLabel articuloNombreLabel = new JLabel("Articulo nombre:");
         articuloNombreLabel.setBounds(20, 160, 100, 16);
@@ -191,9 +191,8 @@ public class AltaVisita extends JFrame {
 
                     String motivo = motivoField.getText().trim();
                     int cantidad = 0;
-                    String cantText = cantidadField.getText().trim();
-                    if (!cantText.isEmpty()) {
-                        try { cantidad = Integer.parseInt(cantText); } catch (NumberFormatException ex) { JOptionPane.showMessageDialog(null, "Cantidad debe ser entero", "Error", JOptionPane.ERROR_MESSAGE); return; }
+                    for (int i = 0; i < articulosModel.getRowCount(); i++) {
+                        cantidad += (Integer) articulosModel.getValueAt(i, 1);
                     }
                     List<ArticuloDTO> articulos = new ArrayList<>();
                     for (int i = 0; i < articulosModel.getRowCount(); i++) {
