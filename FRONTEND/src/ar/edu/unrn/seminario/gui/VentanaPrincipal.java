@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -13,20 +15,19 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import ar.edu.unrn.seminario.api.IApi;
-import ar.edu.unrn.seminario.api.MemoryApi;
+import ar.edu.unrn.seminario.api.PersistenceApi;
+import ar.edu.unrn.seminario.dto.PedidoDonacionDTO;
 
 public class VentanaPrincipal extends JFrame {
 
 	private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					IApi api = new MemoryApi();
+					IApi api = new PersistenceApi();
 					VentanaPrincipal frame = new VentanaPrincipal(api);
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
@@ -37,9 +38,7 @@ public class VentanaPrincipal extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+	
 	public VentanaPrincipal(IApi api) {
 		getContentPane().setLayout(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,12 +77,60 @@ public class VentanaPrincipal extends JFrame {
 		JMenu configuracionMenu = new JMenu("Configuración");
 		menuBar.add(configuracionMenu);
 
-		JMenuItem salirMenuItem = new JMenuItem("Salir");
+		/*JMenuItem salirMenuItem = new JMenuItem("Salir");
 		configuracionMenu.add(salirMenuItem);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+		setContentPane(contentPane);*/
+		
+		JMenu pedidoDonacionMenu = new JMenu("Pedidos de Donacion");
+		menuBar.add(pedidoDonacionMenu);
+		
+		JMenuItem altaPedidoMenuItem = new JMenuItem("Crear Pedido de Donacion");
+		altaPedidoMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AltaPedido altaPedido = new AltaPedido(api);
+				altaPedido.setLocationRelativeTo(null);
+				altaPedido.setVisible(true);
+			}
+		} );
+		pedidoDonacionMenu.add(altaPedidoMenuItem);
+		
+		JMenuItem listarPedidosMenuItem = new JMenuItem("Listar Pedidos de Donacion");
+		listarPedidosMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoPedidos listadoPedidos = new ListadoPedidos(api);
+				listadoPedidos.setLocationRelativeTo(null);
+				listadoPedidos.setVisible(true);
+			}
+		} );
+		pedidoDonacionMenu.add(listarPedidosMenuItem);
+
+		// Ordenes de retiro menu
+		JMenu ordenesMenu = new JMenu("Ordenes de Retiro");
+		menuBar.add(ordenesMenu);
+
+		JMenuItem altaOrdenMenuItem = new JMenuItem("Crear Orden de Retiro");
+		altaOrdenMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AltaOrdenRetiro altaOrden = new AltaOrdenRetiro(api);
+				altaOrden.setLocationRelativeTo(null);
+				altaOrden.setVisible(true);
+			}
+		});
+		ordenesMenu.add(altaOrdenMenuItem);
+
+		JMenuItem listarOrdenesMenuItem = new JMenuItem("Listar Ordenes de Retiro");
+		listarOrdenesMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListadoOrdenes listadoOrdenes = new ListadoOrdenes(api);
+				listadoOrdenes.setLocationRelativeTo(null);
+				listadoOrdenes.setVisible(true);
+			}
+		});
+		ordenesMenu.add(listarOrdenesMenuItem);
+
 	}
 
 }

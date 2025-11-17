@@ -29,9 +29,7 @@ public class ListadoUsuario extends JFrame {
 	JButton activarButton;
 	JButton desactivarButton;
 
-	/**
-	 * Create the frame.
-	 */
+
 	public ListadoUsuario(IApi api) {
 		this.api = api;
 

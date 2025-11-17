@@ -28,12 +28,8 @@ public class AltaUsuario extends JFrame {
 
 	private List<RolDTO> roles = new ArrayList<>();
 
-	/**
-	 * Create the frame.
-	 */
 	public AltaUsuario(IApi api) {
 
-		// Obtengo los roles
 		this.roles = api.obtenerRoles();
 
 		setTitle("Alta Usuario");
