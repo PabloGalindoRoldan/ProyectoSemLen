@@ -194,6 +194,16 @@ public class AltaPedido extends JFrame {
                         int puntaje = (Integer) donacionesModel.getValueAt(i, 2);
                         donaciones.add(new DonacionDTO(tipo, categoria, puntaje));
                     }
+                    
+                    if (donaciones.isEmpty()) {
+                        JOptionPane.showMessageDialog(
+                            null,
+                            "El pedido debe contener al menos una donación.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
 
                     api.crearPedidoDonacion(null, descripcion, observaciones, necesitaVehiculo,
                             donanteUsername, donaciones, true);

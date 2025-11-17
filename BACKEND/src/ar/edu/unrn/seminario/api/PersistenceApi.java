@@ -26,7 +26,7 @@ public class PersistenceApi implements IApi {
     // ==================== USUARIOS ====================
 
     @Override
-    public void registrarUsuario(String username, String password, String email, String nombre, Integer rol) {
+    public void registrarUsuario(String username, String password, String nombre, String email, Integer rol) {
         try {
             Rol r = null;
             if (rol != null) {
@@ -276,7 +276,7 @@ public class PersistenceApi implements IApi {
         }
     }
 
-    // ==================== ÓRDENES DE RETIRO ====================
+    // ==================== ORDENES DE RETIRO ====================
 
     @Override
     public void crearOrdenRetiro(Integer id, Integer pedidoId, String voluntarioUsername, String estado) {
